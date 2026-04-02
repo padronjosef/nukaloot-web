@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { GameCard, SkeletonCard } from "./GameCard";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002/api";
+const API_URL = "/api";
 
 interface UpcomingGame {
   name: string;

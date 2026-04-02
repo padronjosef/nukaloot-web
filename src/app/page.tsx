@@ -15,7 +15,7 @@ import { BackgroundImage } from "./components/BackgroundImage";
 import { Toast, ToastContainer } from "./components/Toast";
 import { GameCard, SkeletonCard } from "./components/GameCard";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3002/api";
+const API_URL = "/api";
 
 type TypeFilter = "all" | "game" | "dlc" | "bundle";
 type ViewMode = "grid" | "list";
