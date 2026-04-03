@@ -51,7 +51,7 @@ export const ViewToggle = ({ value, onChange }: ViewToggleProps) => {
       className="relative w-20 h-10 rounded-full bg-zinc-900 cursor-pointer transition-colors border border-zinc-600/50"
     >
       <div
-        className={`absolute top-1 w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center transition-all duration-200 ${
+        className={`absolute top-1 w-8 h-8 rounded-full bg-zinc-100 text-zinc-900 flex items-center justify-center transition-all duration-200 ${
           value === "list" ? "left-[calc(100%-2.25rem)]" : "left-1"
         }`}
       >

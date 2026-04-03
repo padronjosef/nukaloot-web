@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "../../shared/atoms/Button";
 import { StoreList } from "./StoreList";
 import { useFilterStore, selectAllStoresSelected, selectAllStoreNames } from "../../../stores/useFilterStore";
 import { useSearchStore } from "../../../stores/useSearchStore";
@@ -28,17 +29,9 @@ export const StoreSection = () => {
         <span className="text-sm font-bold text-white uppercase tracking-wider">
           Stores
         </span>
-        <button
-          type="button"
-          onClick={toggleAllStores}
-          className={`text-xs px-2 py-1 rounded border border-zinc-600/50 cursor-pointer ${
-            allStoresSelected
-              ? "text-zinc-400 hover:text-zinc-200"
-              : "text-blue-400 hover:text-blue-300"
-          }`}
-        >
+        <Button onClick={toggleAllStores}>
           {allStoresSelected ? "Deselect all" : "Select all"}
-        </button>
+        </Button>
       </div>
       <StoreList
         allStoreNames={allStoreNames}

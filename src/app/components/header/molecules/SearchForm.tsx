@@ -109,7 +109,7 @@ export const SearchForm = ({
         <button
           type="submit"
           disabled={loading || query.trim().length < 2}
-          className={`${isDesktop ? "h-12" : "h-11"} rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:brightness-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center transition-all duration-300 overflow-hidden ${
+          className={`${isDesktop ? "h-12" : "h-11"} rounded-lg bg-zinc-100 text-zinc-900 font-medium hover:bg-white disabled:brightness-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center transition-all duration-300 overflow-hidden ${
             inputFocused && query.trim().length >= 2 && !loading
               ? `${isDesktop ? "w-12" : "w-11"} ml-2 opacity-100`
               : "w-0 ml-0 opacity-0"

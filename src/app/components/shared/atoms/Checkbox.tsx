@@ -8,10 +8,10 @@ export const Checkbox = ({ checked, size = "md" }: CheckboxProps) => {
   const iconSize = size === "sm" ? 8 : 10;
   return (
     <span className={`${dim} rounded border flex items-center justify-center ${
-      checked ? "bg-blue-600 border-blue-600" : "border-zinc-500"
+      checked ? "bg-zinc-100 border-zinc-100" : "border-zinc-500"
     }`}>
       {checked && (
-        <svg width={iconSize} height={iconSize} viewBox="0 0 10 10" fill="none" stroke="white" strokeWidth="2">
+        <svg width={iconSize} height={iconSize} viewBox="0 0 10 10" fill="none" stroke="#18181b" strokeWidth="2">
           <path d="M2 5L4 7L8 3" />
         </svg>
       )}

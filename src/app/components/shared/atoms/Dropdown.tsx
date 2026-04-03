@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+import { Button } from "./Button";
 import { ChevronIcon } from "./ChevronIcon";
 
 type DropdownProps = {
@@ -36,19 +37,11 @@ export const Dropdown = ({
 
   return (
     <div className={`relative ${className}`} ref={ref}>
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className={`flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-          active
-            ? "bg-blue-600 text-white"
-            : "bg-zinc-800 border border-zinc-600/50 text-zinc-400 hover:text-zinc-200"
-        }`}
-      >
+      <Button variant={active ? "default" : "outline"} onClick={() => setOpen((v) => !v)}>
         {trigger}
         {badge}
         <ChevronIcon open={open} />
-      </button>
+      </Button>
 
       <div
         className={`absolute right-0 top-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-2xl z-100 transition-all duration-200 origin-top ${
