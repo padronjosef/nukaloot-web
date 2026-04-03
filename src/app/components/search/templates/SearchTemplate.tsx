@@ -116,14 +116,7 @@ export const SearchTemplate = () => {
   return (
     <div className="flex-1 pb-4 relative z-10">
       <div className="max-w-5xl mx-auto px-4">
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-16">
-            <div className="w-16 h-16 border-[5px] border-zinc-700 border-t-blue-500 rounded-full animate-spin" />
-            <p className="mt-6 text-zinc-400 text-lg">
-              Searching for the best prices...
-            </p>
-          </div>
-        )}
+        {loading && <SearchSkeleton />}
 
         {!loading && results && (
           <>
