@@ -37,7 +37,7 @@ export const ResultsToast = ({
         hiding ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
       }`}
     >
-      <div className="w-full max-w-5xl flex justify-end pointer-events-none">
+      <div className="w-full max-w-5xl px-4 flex justify-end pointer-events-none">
         <div
           className={`pointer-events-auto flex items-center justify-between md:justify-start gap-2 bg-zinc-800 rounded-lg px-4 py-2.5 shadow-2xl text-sm text-zinc-300 transition-colors duration-300 w-full md:w-auto ${
             scraping
