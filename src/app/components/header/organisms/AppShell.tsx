@@ -146,11 +146,16 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const lastSearched = useSearchStore((s) => s.results?.game?.name || "");
+
   const onSubmitSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    inputRef.current?.blur();
     const term = query.trim();
-    if (term.length < 2) return;
+    if (term.length < 2) {
+      inputRef.current?.blur();
+      return;
+    }
+    inputRef.current?.blur();
     router.push(`/search?q=${encodeURIComponent(term)}`);
     doSearch(term);
   };
@@ -283,6 +288,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
             recentSearches={recentSearches}
             showRecent={showRecent}
             onShowRecentChange={setShowRecent}
+            lastSearched={lastSearched}
             inputRef={inputRef}
             variant="desktop"
             className="hidden md:block w-full mb-5 relative"
@@ -308,6 +314,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
             recentSearches={recentSearches}
             showRecent={showRecent}
             onShowRecentChange={setShowRecent}
+            lastSearched={lastSearched}
             variant="mobile"
             className="md:hidden w-full mb-4 relative"
           />

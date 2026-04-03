@@ -15,6 +15,7 @@ type SearchFormProps = {
   recentSearches: string[];
   showRecent: boolean;
   onShowRecentChange: (show: boolean) => void;
+  lastSearched?: string;
   inputRef?: React.RefObject<HTMLInputElement | null>;
   variant?: "desktop" | "mobile";
   className?: string;
@@ -32,6 +33,7 @@ export const SearchForm = ({
   recentSearches,
   showRecent,
   onShowRecentChange,
+  lastSearched = "",
   inputRef: externalRef,
   variant = "desktop",
   className = "",
@@ -110,7 +112,7 @@ export const SearchForm = ({
           type="submit"
           disabled={loading || query.trim().length < 2}
           className={`${isDesktop ? "h-12" : "h-11"} rounded-lg bg-zinc-100 text-zinc-900 font-medium hover:bg-white disabled:brightness-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center transition-all duration-300 overflow-hidden ${
-            inputFocused && query.trim().length >= 2 && !loading
+            inputFocused && query.trim().length >= 2 && !loading && query.trim().toLowerCase() !== lastSearched.toLowerCase()
               ? `${isDesktop ? "w-12" : "w-11"} ml-2 opacity-100`
               : "w-0 ml-0 opacity-0"
           }`}
