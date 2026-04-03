@@ -30,10 +30,12 @@ export const useUIStore = create<UIState & UIActions>()((set) => ({
 
   // Actions
   setMobileMenuOpen: (value) => {
-    set((state) => ({
-      mobileMenuOpen:
-        typeof value === "function" ? value(state.mobileMenuOpen) : value,
-    }));
+    set((state) => {
+      const open =
+        typeof value === "function" ? value(state.mobileMenuOpen) : value;
+      if (!open) window.scrollTo({ top: 0, behavior: "smooth" });
+      return { mobileMenuOpen: open };
+    });
   },
 
   setInputFocused: (inputFocused) => set({ inputFocused }),
