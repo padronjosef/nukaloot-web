@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useMemo, useSyncExternalStore } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { HOME_BACKGROUNDS } from "../../../lib/stores";
@@ -20,10 +20,7 @@ import { useSearchStore } from "../../../stores/useSearchStore";
 import { useUIStore } from "../../../stores/useUIStore";
 import type { TypeFilter } from "../../../lib/stores";
 import { HeaderSkeleton } from "../atoms/HeaderSkeleton";
-
-const subscribe = () => () => {};
-const useMounted = () =>
-  useSyncExternalStore(subscribe, () => true, () => false);
+import { useMounted } from "../../../hooks/useMounted";
 
 const CurrencySelector = dynamic(() =>
   import("../molecules/CurrencySelector").then((m) => ({ default: m.CurrencySelector })),

@@ -9,10 +9,13 @@ import { useSearchStore } from "../../../stores/useSearchStore";
 import { useFilterStore, selectAllStoresSelected } from "../../../stores/useFilterStore";
 import { useUIStore } from "../../../stores/useUIStore";
 import type { PriceResult } from "../../../lib/stores";
+import { SearchSkeleton } from "../atoms/SearchSkeleton";
+import { useMounted } from "../../../hooks/useMounted";
 
 const ITEMS_PER_PAGE = 21;
 
 export const SearchTemplate = () => {
+  const mounted = useMounted();
   const searchParams = useSearchParams();
   const q = searchParams.get("q") || "";
   const prevQueryRef = useRef("");
@@ -107,6 +110,8 @@ export const SearchTemplate = () => {
         .values(),
     ];
   }, [cheapestOnly, filteredPrices]);
+
+  if (!mounted) return <SearchSkeleton />;
 
   return (
     <div className="flex-1 pb-4 relative z-10">
