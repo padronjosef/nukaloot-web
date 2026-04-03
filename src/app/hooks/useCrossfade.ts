@@ -2,13 +2,13 @@
 
 import { useState, useRef, useCallback } from "react";
 
-export interface CrossfadeLayers {
+export type CrossfadeLayers = {
   layerA: string | null;
   layerB: string | null;
   activeLayer: "a" | "b";
 }
 
-export function useCrossfade() {
+export const useCrossfade = () => {
   const [layerA, setLayerA] = useState<string | null>(null);
   const [layerB, setLayerB] = useState<string | null>(null);
   const [activeLayer, setActiveLayer] = useState<"a" | "b">("a");
@@ -33,4 +33,4 @@ export function useCrossfade() {
   const layers: CrossfadeLayers = { layerA, layerB, activeLayer };
 
   return { layers, setImage };
-}
+};

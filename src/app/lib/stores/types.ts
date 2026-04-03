@@ -1,7 +1,22 @@
 export type TypeFilter = "all" | "game" | "dlc" | "bundle";
+
 export type ViewMode = "grid" | "list";
 
-export interface PriceResult {
+export type CurrencyCode =
+  | "USD"
+  | "EUR"
+  | "COP"
+  | "GBP"
+  | "BRL"
+  | "MXN"
+  | "ARS"
+  | "CLP"
+  | "PEN"
+  | "JPY"
+  | "CAD"
+  | "AUD";
+
+export type PriceResult = {
   id: string;
   price: number;
   originalPrice?: number;
@@ -16,7 +31,7 @@ export interface PriceResult {
   store?: { name: string; url: string };
 }
 
-export interface SearchResponse {
+export type SearchResponse = {
   game: { name: string; slug: string };
   prices: PriceResult[];
 }

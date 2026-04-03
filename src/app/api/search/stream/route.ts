@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
 
-const INTERNAL_API_URL = process.env.INTERNAL_API_URL || "http://localhost:3002";
+const INTERNAL_API_URL =
+  process.env.INTERNAL_API_URL || "http://localhost:3002";
 
-export async function GET(request: NextRequest) {
+export const GET = async (request: NextRequest) => {
   const q = request.nextUrl.searchParams.get("q") || "";
   const cc = request.nextUrl.searchParams.get("cc") || "us";
 
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
     `${INTERNAL_API_URL}/api/search/stream?q=${encodeURIComponent(q)}&cc=${encodeURIComponent(cc)}`,
     {
       headers: { Accept: "text/event-stream" },
-    }
+    },
   );
 
   if (!upstream.ok || !upstream.body) {
@@ -24,4 +25,4 @@ export async function GET(request: NextRequest) {
       Connection: "keep-alive",
     },
   });
-}
+};
