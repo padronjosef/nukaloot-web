@@ -240,7 +240,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
             <p className="text-zinc-200 text-sm">
               Find the cheapest price across multiple stores
             </p>
-            <span className="absolute bottom-2 left-3 text-[10px] text-zinc-500">
+            <span className="absolute bottom-2 right-3 text-[10px] text-zinc-500">
               v{process.env.NEXT_PUBLIC_APP_VERSION}
             </span>
           </header>

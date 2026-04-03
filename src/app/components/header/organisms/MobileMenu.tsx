@@ -66,7 +66,13 @@ export const MobileMenu = () => {
           />
         </div>
 
-        <hr className="border-zinc-600" />
+        <div className="flex items-center gap-2">
+          <hr className="flex-1 border-zinc-600" />
+          <span className="text-[10px] text-zinc-500">
+            v{process.env.NEXT_PUBLIC_APP_VERSION}
+          </span>
+          <hr className="flex-1 border-zinc-600" />
+        </div>
 
         <StoreSection />
       </div>
