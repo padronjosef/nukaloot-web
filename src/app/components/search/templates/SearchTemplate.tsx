@@ -7,15 +7,11 @@ import { convertPrice } from "../../../lib/currency";
 import { PriceGrid } from "../organisms/PriceGrid";
 import { useSearchStore } from "../../../stores/useSearchStore";
 import { useFilterStore, selectAllStoresSelected } from "../../../stores/useFilterStore";
-import { useUIStore } from "../../../stores/useUIStore";
 import type { PriceResult } from "../../../lib/stores";
 import { SearchSkeleton } from "../atoms/SearchSkeleton";
-import { useMounted } from "../../../hooks/useMounted";
-
 const ITEMS_PER_PAGE = 21;
 
 export const SearchTemplate = () => {
-  const mounted = useMounted();
   const searchParams = useSearchParams();
   const q = searchParams.get("q") || "";
   const prevQueryRef = useRef("");
@@ -28,6 +24,7 @@ export const SearchTemplate = () => {
   const loading = useSearchStore((s) => s.loading);
   const doSearch = useSearchStore((s) => s.doSearch);
   const setQuery = useSearchStore((s) => s.setQuery);
+  const lastUpdated = useSearchStore((s) => s.lastUpdated);
 
   // Filter store
   const currency = useFilterStore((s) => s.currency);
@@ -39,7 +36,6 @@ export const SearchTemplate = () => {
   const allStoresSelected = useFilterStore(selectAllStoresSelected);
 
   // UI store
-  const filterFade = useUIStore((s) => s.filterFade);
 
   // Search from URL
   useEffect(() => {
@@ -111,19 +107,18 @@ export const SearchTemplate = () => {
     ];
   }, [cheapestOnly, filteredPrices]);
 
-  if (!mounted) return <SearchSkeleton />;
+  const showSkeleton = loading || (!results && !!q && !lastUpdated);
 
   return (
     <div className="flex-1 pb-4 relative z-10">
       <div className="max-w-5xl mx-auto px-4">
-        {loading && <SearchSkeleton />}
+        {showSkeleton && <SearchSkeleton />}
 
         {!loading && results && (
           <>
             <PriceGrid
               prices={displayPrices || []}
               viewMode={viewMode}
-              filterFade={filterFade}
               displayPrice={displayPrice}
               visibleCount={visibleCount}
               typeFilter={typeFilter}
@@ -142,7 +137,7 @@ export const SearchTemplate = () => {
           </>
         )}
 
-        {!loading && !results && q && (
+        {!loading && !results && q && lastUpdated && (
           <div className="flex flex-col items-center justify-center py-16">
             <p className="text-zinc-400 text-lg">
               No results found. Try a different search term.

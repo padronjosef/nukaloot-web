@@ -47,6 +47,6 @@ export const useUIStore = create<UIState & UIActions>()((set) => ({
   triggerFilterFade: () => {
     set({ filterFade: true });
     clearTimeout(filterFadeTimer);
-    filterFadeTimer = setTimeout(() => set({ filterFade: false }), 200);
+    filterFadeTimer = setTimeout(() => set({ filterFade: false }), 400);
   },
 }));

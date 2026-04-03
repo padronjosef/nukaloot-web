@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { motion } from "motion/react";
 import { Skeleton } from "../atoms/Skeleton";
 
 const ImageFallback = () => {
@@ -27,7 +28,7 @@ const ImageFallback = () => {
 type Badge = {
   label: string;
   className: string;
-}
+};
 
 type GameCardProps = {
   href: string;
@@ -37,7 +38,14 @@ type GameCardProps = {
   storeIcon?: React.ReactNode;
   bottomRight?: React.ReactNode;
   variant?: "grid" | "list";
-}
+};
+
+const cardAnimation = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+  transition: { duration: 0.3 },
+};
 
 export const GameCard = ({
   href,
@@ -52,11 +60,13 @@ export const GameCard = ({
 
   if (variant === "list") {
     return (
-      <a
+      <motion.a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex items-start gap-4 p-3 rounded-lg border border-zinc-700/50 hover:border-zinc-600 transition-all duration-300 cursor-pointer bg-zinc-900/80"
+        className="group flex items-start gap-4 p-3 rounded-lg border border-zinc-700/50 hover:border-zinc-600 transition-colors duration-300 cursor-pointer bg-zinc-900/80"
+        layout
+        {...cardAnimation}
       >
         <div className="relative w-16 h-16 rounded overflow-hidden shrink-0">
           {!image || imgError ? (
@@ -89,16 +99,18 @@ export const GameCard = ({
           </div>
         </div>
         {bottomRight && <div className="shrink-0">{bottomRight}</div>}
-      </a>
+      </motion.a>
     );
   }
 
   return (
-    <a
+    <motion.a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex flex-col justify-between rounded-lg border border-zinc-700/50 overflow-hidden h-47.5 cursor-pointer transition-all duration-300"
+      className="group relative flex flex-col justify-between rounded-lg border border-zinc-700/50 overflow-hidden h-47.5 cursor-pointer transition-colors duration-300"
+      layout
+      {...cardAnimation}
     >
       {!image || imgError ? (
         <ImageFallback />
@@ -131,7 +143,7 @@ export const GameCard = ({
         </div>
         {bottomRight}
       </div>
-    </a>
+    </motion.a>
   );
 };
 

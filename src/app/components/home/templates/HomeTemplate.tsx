@@ -5,8 +5,6 @@ import dynamic from "next/dynamic";
 import { RecentSearches } from "../molecules/RecentSearches";
 import { useSearchStore } from "../../../stores/useSearchStore";
 import { useUIStore } from "../../../stores/useUIStore";
-import { HomeSkeleton } from "../atoms/HomeSkeleton";
-import { useMounted } from "../../../hooks/useMounted";
 
 const FeaturedCarousel = dynamic(() =>
   import("../organisms/FeaturedCarousel").then((m) => ({ default: m.FeaturedCarousel })),
@@ -16,7 +14,6 @@ const UpcomingGames = dynamic(() =>
 );
 
 export const HomeTemplate = () => {
-  const mounted = useMounted();
   const router = useRouter();
   const setQuery = useSearchStore((s) => s.setQuery);
   const doSearch = useSearchStore((s) => s.doSearch);
@@ -28,8 +25,6 @@ export const HomeTemplate = () => {
     doSearch(name);
     router.push(`/search?q=${encodeURIComponent(name)}`);
   };
-
-  if (!mounted) return <HomeSkeleton />;
 
   return (
     <div className="animate-fade-in-up">

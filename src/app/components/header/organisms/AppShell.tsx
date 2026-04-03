@@ -4,6 +4,8 @@ import { useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { HOME_BACKGROUNDS } from "../../../lib/stores";
+import { HeaderSkeleton } from "../atoms/HeaderSkeleton";
+import { useMounted } from "../../../hooks/useMounted";
 import { getHomeBackground } from "../../../lib/storage";
 import { BackgroundImage } from "../../shared/atoms/BackgroundImage";
 import { useCrossfade } from "../../../hooks/useCrossfade";
@@ -19,8 +21,6 @@ import { useFilterStore, selectAllStoresSelected } from "../../../stores/useFilt
 import { useSearchStore } from "../../../stores/useSearchStore";
 import { useUIStore } from "../../../stores/useUIStore";
 import type { TypeFilter } from "../../../lib/stores";
-import { HeaderSkeleton } from "../atoms/HeaderSkeleton";
-import { useMounted } from "../../../hooks/useMounted";
 
 const CurrencySelector = dynamic(() =>
   import("../molecules/CurrencySelector").then((m) => ({ default: m.CurrencySelector })),
@@ -192,7 +192,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     triggerFilterFade();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedStores, cheapestOnly, typeFilter, gameFilter]);
+  }, [selectedStores, cheapestOnly, typeFilter, gameFilter, currency, viewMode]);
 
   if (!mounted) return <HeaderSkeleton>{children}</HeaderSkeleton>;
 
