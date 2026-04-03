@@ -135,7 +135,7 @@ export function CurrencySelector({ value, onChange, availableRates }: CurrencySe
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-zinc-800 text-zinc-400 hover:text-zinc-200"
+        className="flex items-center gap-2 h-9 px-3 rounded-lg text-sm font-medium transition-colors cursor-pointer bg-zinc-800 border border-zinc-600/50 text-zinc-400 hover:text-zinc-200"
       >
         <FlagIcon country={getCountry(value)} />
         {value}
@@ -144,8 +144,9 @@ export function CurrencySelector({ value, onChange, availableRates }: CurrencySe
         </svg>
       </button>
 
-      {open && (
-        <div className="absolute right-0 top-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-2xl z-[100] min-w-[360px] py-2 grid grid-cols-2 gap-x-1">
+      <div className={`absolute right-0 top-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-2xl z-[100] min-w-[360px] py-2 grid grid-cols-2 gap-x-1 transition-all duration-200 origin-top ${
+        open ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-0 pointer-events-none"
+      }`}>
           <div>
             <div className="px-4 py-1 text-[10px] uppercase tracking-wider text-zinc-500 font-semibold">Global</div>
             {CURRENCIES.filter(c => GLOBAL_CURRENCIES.has(c.code)).map((currency) => renderCurrencyButton(currency, value, availableRates, onChange, setOpen, hoveredCode, setHoveredCode))}
@@ -155,7 +156,6 @@ export function CurrencySelector({ value, onChange, availableRates }: CurrencySe
             {CURRENCIES.filter(c => !GLOBAL_CURRENCIES.has(c.code)).map((currency) => renderCurrencyButton(currency, value, availableRates, onChange, setOpen, hoveredCode, setHoveredCode))}
           </div>
         </div>
-      )}
     </div>
   );
 }

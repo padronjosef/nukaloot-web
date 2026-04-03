@@ -50,7 +50,7 @@ export function GameCard({
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex items-start gap-4 p-3 rounded-lg border border-zinc-700/50 hover:border-zinc-600 transition-colors cursor-pointer bg-zinc-900/80"
+        className="group flex items-start gap-4 p-3 rounded-lg border border-zinc-700/50 hover:border-zinc-600 transition-all duration-300 cursor-pointer bg-zinc-900/80"
       >
         <div className="relative w-16 h-16 rounded overflow-hidden shrink-0">
           {!image || imgError ? (
@@ -87,7 +87,7 @@ export function GameCard({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex flex-col justify-between rounded-lg border border-zinc-700/50 overflow-hidden h-[190px] cursor-pointer"
+      className="group relative flex flex-col justify-between rounded-lg border border-zinc-700/50 overflow-hidden h-[190px] cursor-pointer transition-all duration-300"
     >
       {!image || imgError ? (
         <ImageFallback />

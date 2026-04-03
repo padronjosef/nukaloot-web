@@ -20,3 +20,30 @@
 @theme inline {
   --animate-fade-in-up: fade-in-up 0.6s ease-out both;
 }
+
+@keyframes border-spin {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.border-loading {
+  position: relative;
+  border: none !important;
+  isolation: isolate;
+}
+
+.border-loading::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #60a5fa, #3b82f6);
+  background-size: 200% 100%;
+  animation: border-spin 1.5s linear infinite;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+}

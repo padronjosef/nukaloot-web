@@ -40,8 +40,12 @@ export function convertPrice(
   amount: number,
   rates: Record<string, number>,
   to: string,
+  from = "USD",
 ): number {
-  if (to === "USD") return amount;
-  const rate = rates[to] ?? 1;
-  return Math.round(amount * rate * 100) / 100;
+  // Convert to USD first, then to target currency
+  const fromRate = rates[from] ?? 1;
+  const usdAmount = amount / fromRate;
+  if (to === "USD") return Math.round(usdAmount * 100) / 100;
+  const toRate = rates[to] ?? 1;
+  return Math.round(usdAmount * toRate * 100) / 100;
 }

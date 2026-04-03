@@ -149,12 +149,13 @@ function PriceCard({
 }: {
   price: PriceResult;
   index: number;
-  displayPrice: (usd: number) => string;
+  displayPrice: (amount: number, from?: string) => string;
   variant?: "grid" | "list";
 }) {
   const badges = [];
   if (price.gameType === "dlc") badges.push({ label: "DLC", className: "bg-orange-500" });
   if (price.gameType === "bundle") badges.push({ label: "Bundle", className: "bg-purple-500" });
+  const priceCurrency = price.currency || "USD";
 
   return (
     <GameCard
@@ -168,7 +169,7 @@ function PriceCard({
         <div className={`flex flex-col items-end ${variant === "grid" ? "bg-black/70 rounded px-2 py-1" : ""}`}>
           {price.originalPrice && price.originalPrice > price.price && (
             <span className="text-xs text-zinc-200 line-through">
-              {displayPrice(Number(price.originalPrice))}
+              {displayPrice(Number(price.originalPrice), priceCurrency)}
             </span>
           )}
           <span
@@ -176,7 +177,7 @@ function PriceCard({
               index === 0 ? "text-green-400" : "text-white"
             }`}
           >
-            {displayPrice(Number(price.price))}
+            {displayPrice(Number(price.price), priceCurrency)}
           </span>
         </div>
       }
@@ -191,6 +192,8 @@ export default function Home() {
   const [gameFilter, setGameFilter] = useState<string>("all");
   const [viewMode, setViewModeState] = useState<ViewMode>("grid");
   const [viewChangeCount, setViewChangeCount] = useState(0);
+  const [filterFade, setFilterFade] = useState(false);
+  const filterFadeRef = useRef<ReturnType<typeof setTimeout>>();
   const [results, setResults] = useState<SearchResponse | null>(null);
   const [homeBg, setHomeBg] = useState<string | null>(HOME_BACKGROUNDS[0]);
   const [rates, setRates] = useState<Record<string, number>>({ USD: 1 });
@@ -356,6 +359,11 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     if (!showStoreDropdown) return;
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node;
@@ -388,8 +396,8 @@ export default function Home() {
 
   const symbol = getCurrencySymbol(currency);
 
-  function displayPrice(usdPrice: number): string {
-    const converted = convertPrice(usdPrice, rates, currency);
+  function displayPrice(amount: number, from = "USD"): string {
+    const converted = convertPrice(amount, rates, currency, from);
     return `${symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
 
@@ -484,6 +492,12 @@ export default function Home() {
     setGameNamesOverflows(gameNamesRef.current.scrollHeight > 40);
   }, [gameNames]);
 
+  useEffect(() => {
+    setFilterFade(true);
+    clearTimeout(filterFadeRef.current);
+    filterFadeRef.current = setTimeout(() => setFilterFade(false), 200);
+  }, [selectedStores, cheapestOnly, typeFilter, gameFilter]);
+
   // Hero background: use the high-res background_raw from Steam
   const heroImage = results?.prices.find(
     (p) => p.backgroundUrl && (gameFilter === "all" ? p.gameType === "game" : p.gameName === gameFilter)
@@ -534,9 +548,9 @@ export default function Home() {
 
   function renderPrices(prices: PriceResult[]) {
     return (
-      <div key={viewChangeCount} className={`animate-fade-in-up ${viewMode === "list" ? "space-y-3" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"}`}>
+      <div key={viewChangeCount} className={`animate-fade-in-up transition-opacity duration-200 ${filterFade ? "opacity-0" : "opacity-100"} ${viewMode === "list" ? "space-y-3" : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"}`}>
         {prices.map((price, i) => (
-          <PriceCard key={price.id || `${price.store?.name}-${price.gameName}-${price.price}`} price={price} index={i} displayPrice={displayPrice} variant={viewMode} />
+          <PriceCard key={price.id || `${price.store?.name}-${price.gameName}-${price.productUrl}`} price={price} index={i} displayPrice={displayPrice} variant={viewMode} />
         ))}
       </div>
     );
@@ -646,30 +660,14 @@ export default function Home() {
             </div>
           </div>
           <h1 className="text-lg font-bold text-white flex-1 text-center">Game Price Finder</h1>
-          {displayPrices && displayPrices.length > 0 && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); setCheapestOnly(!cheapestOnly); }}
-              title={cheapestOnly ? "Showing cheapest only" : "Showing all prices"}
-              className={`w-[34px] h-[34px] flex items-center justify-center rounded-lg cursor-pointer transition-colors ${
-                cheapestOnly
-                  ? "text-green-400 bg-green-900"
-                  : "text-zinc-300 bg-zinc-700 hover:text-white hover:bg-zinc-600"
-              }`}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23" />
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-            </button>
-          )}
+          <div className="w-[34px] h-[34px]" />
 
           {/* Mobile burger menu panel — overlay */}
           <Collapse open={mobileMenuOpen} maxHeight="70vh" duration={200} className="absolute left-0 right-0 top-full mt-1 z-[400]">
             <div className="bg-zinc-800 border border-zinc-600/50 rounded-lg px-4 py-4 flex flex-col gap-4 shadow-2xl max-h-[70vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               {/* Cheapest only */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-400">Cheapest only</span>
+                <span className="text-sm font-bold text-white uppercase tracking-wider">Cheapest only</span>
                 <button
                   type="button"
                   onClick={() => setCheapestOnly(!cheapestOnly)}
@@ -688,24 +686,26 @@ export default function Home() {
 
               {/* View mode */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-400">View</span>
+                <span className="text-sm font-bold text-white uppercase tracking-wider">View</span>
                 <ViewToggle value={viewMode} onChange={(m) => { setViewMode(m); setMobileMenuOpen(false); }} />
               </div>
 
               {/* Currency */}
               <div className="flex items-center justify-between">
-                <span className="text-sm text-zinc-400">Currency</span>
+                <span className="text-sm font-bold text-white uppercase tracking-wider">Currency</span>
                 <CurrencySelector value={currency} onChange={(c) => { handleCurrencyChange(c); setMobileMenuOpen(false); }} availableRates={rates} />
               </div>
+
+              <hr className="border-zinc-600" />
 
               {/* Stores */}
               <div ref={storeDropdownMobileRef}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-zinc-400">Stores</span>
+                  <span className="text-sm font-bold text-white uppercase tracking-wider">Stores</span>
                   <button
                     type="button"
                     onClick={toggleAllStores}
-                    className={`text-xs px-2 py-1 rounded cursor-pointer ${
+                    className={`text-xs px-2 py-1 rounded border border-zinc-600/50 cursor-pointer ${
                       allStoresSelected ? "text-zinc-400 hover:text-zinc-200" : "text-blue-400 hover:text-blue-300"
                     }`}
                   >
@@ -733,7 +733,7 @@ export default function Home() {
                             </svg>
                           )}
                         </span>
-                        <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-widest">{group.label}</span>
+                        <span className="text-sm font-bold text-white uppercase tracking-wider">{group.label}</span>
                       </div>
                       <div className="flex flex-col">
                         {group.stores.map((store) => {
@@ -758,7 +758,7 @@ export default function Home() {
                                 )}
                               </span>
                               <StoreIcon storeName={store} />
-                              <span className={`truncate ${unavailable ? "text-zinc-500" : "text-zinc-300"}`}>{store}</span>
+                              <span className={`truncate ${unavailable ? "text-zinc-500" : "text-white"}`}>{store}</span>
                             </div>
                           );
                         })}
@@ -790,17 +790,17 @@ export default function Home() {
           <button
             type="button"
             onClick={() => setCheapestOnly(!cheapestOnly)}
-            title={cheapestOnly ? "Showing cheapest only" : "Show cheapest only"}
-            className={`ml-auto w-9 h-9 flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
+            className={`ml-auto flex items-center gap-2 px-3 h-9 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
               cheapestOnly
                 ? "text-green-400 bg-green-900"
                 : "bg-zinc-800 text-zinc-400 hover:text-zinc-200"
             }`}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="1" x2="12" y2="23" />
               <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
             </svg>
+            Cheapest only
           </button>
 
           <CurrencySelector value={currency} onChange={handleCurrencyChange} availableRates={rates} />
@@ -826,7 +826,7 @@ export default function Home() {
               </svg>
             </button>
             {showStoreDropdown && (
-              <div className="absolute right-0 top-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-2xl z-[100] py-1">
+              <div className="absolute right-0 top-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-2xl z-[100] py-1 animate-fade-in-up">
                 <button
                   type="button"
                   onClick={toggleAllStores}
@@ -867,7 +867,7 @@ export default function Home() {
                                 </svg>
                               )}
                             </span>
-                            <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-widest">{group.label}</span>
+                            <span className="text-xs font-bold text-white uppercase tracking-wider">{group.label}</span>
                           </div>
                         );
                       })()}
@@ -894,7 +894,7 @@ export default function Home() {
                               )}
                             </span>
                             <StoreIcon storeName={store} />
-                            <span className={unavailable ? "text-zinc-500" : "text-zinc-300"}>{store}</span>
+                            <span className={unavailable ? "text-zinc-500" : "text-white"}>{store}</span>
                           </div>
                         );
                       })}
@@ -918,7 +918,7 @@ export default function Home() {
                 onBlur={() => { setInputFocused(false); setTimeout(() => setShowRecent(false), 200); }}
                 disabled={loading}
                 placeholder={loading ? "Searching..." : "Search for a game... (e.g. Elden Ring)"}
-                className={`w-full h-12 px-4 pr-10 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${loading ? "animate-pulse opacity-60" : ""}`}
+                className={`w-full h-12 px-4 pr-14 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ${loading ? "animate-pulse opacity-60" : ""}`}
               />
               {query && (
                 <button
@@ -932,9 +932,9 @@ export default function Home() {
                     url.searchParams.delete("q");
                     window.history.pushState({}, "", url.toString());
                   }}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200 transition-colors cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-md bg-zinc-700 hover:bg-zinc-600 text-zinc-400 hover:text-white transition-colors cursor-pointer"
                 >
-                  <svg width="20" height="20" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 4L14 14M14 4L4 14" />
                   </svg>
                 </button>
@@ -1012,7 +1012,7 @@ export default function Home() {
                 onBlur={() => { setInputFocused(false); setTimeout(() => setShowRecent(false), 200); }}
                 disabled={loading}
                 placeholder={loading ? "Searching..." : "Search for a game..."}
-                className={`w-full h-11 px-3 pr-9 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${loading ? "animate-pulse opacity-60" : ""}`}
+                className={`w-full h-11 px-4 pr-13 rounded-lg bg-zinc-800 border border-zinc-700 text-zinc-100 placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${loading ? "animate-pulse opacity-60" : ""}`}
               />
               {query && (
                 <button
@@ -1026,7 +1026,7 @@ export default function Home() {
                     url.searchParams.delete("q");
                     window.history.pushState({}, "", url.toString());
                   }}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-200 transition-colors cursor-pointer"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-md bg-zinc-700 hover:bg-zinc-600 text-zinc-400 hover:text-white transition-colors cursor-pointer"
                 >
                   <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 4L14 14M14 4L4 14" />
@@ -1256,15 +1256,15 @@ export default function Home() {
 
       {/* Status bar — anchored to max-w-5xl wrapper */}
       {!loading && displayPrices && displayPrices.length > 0 && !showMobileSummary.dismissed && (
-        <div className={`fixed bottom-6 left-0 right-0 z-[200] flex justify-center pointer-events-none transition-all duration-300 ${
+        <div className={`fixed bottom-2 md:bottom-6 left-0 right-0 z-[200] flex justify-center pointer-events-none transition-all duration-300 ${
           showMobileSummary.hiding ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
         }`}>
           <div className="w-full max-w-5xl px-4 md:px-0 flex justify-end pointer-events-none">
-            <div className={`pointer-events-auto flex items-center justify-between md:justify-start gap-2 bg-zinc-800 border rounded-lg px-4 py-2.5 shadow-2xl text-sm text-zinc-300 transition-colors duration-300 w-full md:w-auto ${
-              !scraping && lastUpdated ? "border-green-700" : "border-zinc-700"
+            <div className={`pointer-events-auto flex items-center justify-between md:justify-start gap-2 bg-zinc-800 rounded-lg px-4 py-2.5 shadow-2xl text-sm text-zinc-300 transition-colors duration-300 w-full md:w-auto ${
+              scraping ? "border-loading" : !scraping && lastUpdated ? "border border-green-700" : "border border-zinc-700"
             }`}>
-              <span><span className="font-bold text-white">{displayPrices.length}</span> Results</span>
-              <div className="flex items-center gap-2">
+              <span className="leading-7"><span className="font-bold text-white">{displayPrices.length}</span> Results</span>
+              <div className="flex items-center gap-2 leading-7">
                 {scraping && (
                   <>
                     <span className="hidden md:inline text-zinc-600">·</span>
@@ -1283,9 +1283,9 @@ export default function Home() {
                     setShowMobileSummary({ dismissed: false, hiding: true });
                     setTimeout(() => setShowMobileSummary({ dismissed: true, hiding: true }), 300);
                   }}
-                  className="text-zinc-500 hover:text-zinc-300 cursor-pointer ml-1"
+                  className="w-7 h-7 flex items-center justify-center rounded-md bg-zinc-700 hover:bg-zinc-600 text-zinc-400 hover:text-white cursor-pointer transition-colors ml-1"
                 >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M3 3l8 8M11 3l-8 8" />
                   </svg>
                 </button>
