@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ChevronIcon } from "./ChevronIcon";
+import { Button } from "./Button";
 import { useUIStore } from "@/app/stores/useUIStore";
 
 export const ScrollToTop = () => {
@@ -26,16 +27,20 @@ export const ScrollToTop = () => {
   const visible = scrolled && !toastVisible;
 
   return (
-    <button
-      type="button"
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className={`fixed bottom-2 left-1/2 -translate-x-1/2 z-200 w-10 h-10 flex items-center justify-center rounded bg-zinc-800 border border-zinc-600 text-zinc-400 hover:text-white hover:border-zinc-400 cursor-pointer transition-all duration-500 ${
+    <div
+      className={`fixed bottom-2 left-1/2 -translate-x-1/2 z-200 transition-all duration-500 ${
         visible
           ? "opacity-100 translate-y-0"
           : "opacity-0 translate-y-4 pointer-events-none"
       }`}
     >
-      <ChevronIcon open={true} size={14} />
-    </button>
+      <Button
+        variant="dark"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className="!w-10 !h-10 !p-0 justify-center"
+      >
+        <ChevronIcon open={true} size={14} />
+      </Button>
+    </div>
   );
 };

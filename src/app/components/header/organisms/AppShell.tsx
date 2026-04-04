@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import { HOME_BACKGROUNDS } from "@/app/lib/stores";
 import { HeaderSkeleton } from "../atoms/HeaderSkeleton";
@@ -16,7 +16,9 @@ import { GameNameFilter } from "../molecules/GameNameFilter";
 import { ViewToggle } from "../atoms/ViewToggle";
 import { BurgerIcon } from "../atoms/BurgerIcon";
 import { CheapestButton } from "../atoms/CheapestButton";
+import { Button } from "@/app/components/shared/atoms/Button";
 import { FireIcon } from "@/app/components/shared/atoms/FireIcon";
+import { HomeIcon } from "@/app/components/shared/atoms/HomeIcon";
 import { ScrollToTop } from "@/app/components/shared/atoms/ScrollToTop";
 import { useFilterStore, selectAllStoresSelected } from "@/app/stores/useFilterStore";
 import { useSearchStore } from "@/app/stores/useSearchStore";
@@ -38,6 +40,7 @@ const StoreDropdown = dynamic(() =>
 export const AppShell = ({ children }: { children: React.ReactNode }) => {
   const initializing = useSearchStore((s) => s.initializing);
   const router = useRouter();
+  const pathname = usePathname();
   const headerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const homeBgRef = useRef<string>(HOME_BACKGROUNDS[0]);
@@ -213,6 +216,14 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
         <div className="w-full max-w-5xl px-4 flex flex-col items-center">
           {/* Desktop header */}
           <header className="hidden md:flex w-full text-center mb-4 relative flex-col items-center bg-black/70 rounded-lg px-5 py-3">
+            <div
+              className={`absolute top-2 left-2 z-10 transition-all duration-300 ${pathname !== "/" ? "opacity-100 scale-100" : "opacity-0 scale-0 pointer-events-none"}`}
+              onClick={() => { router.push("/"); clearSearch(); }}
+            >
+              <Button variant="dark" className="!h-[34px] !px-2">
+                <HomeIcon />
+              </Button>
+            </div>
             <div className="absolute top-2 right-2 z-10">
               <ViewToggle value={viewMode} onChange={setViewMode} />
             </div>
@@ -233,12 +244,19 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
             className="md:hidden w-full mb-3 relative z-400 flex items-center bg-zinc-800 border border-zinc-700 rounded-lg px-4 py-2.5 cursor-pointer"
             onClick={() => setMobileMenuOpen((v) => !v)}
           >
-            <BurgerIcon open={mobileMenuOpen} />
+            <div
+              className={`transition-all duration-300 ${pathname !== "/" ? "opacity-100" : "opacity-0 pointer-events-none invisible"}`}
+              onClick={(e) => { e.stopPropagation(); router.push("/"); clearSearch(); }}
+            >
+              <Button variant="dark" className="!h-[34px] !px-2">
+                <HomeIcon />
+              </Button>
+            </div>
             <h1 className="text-lg font-bold text-white flex-1 text-center flex items-center justify-center gap-1.5">
               <FireIcon size={18} />
               Game Price Finder
             </h1>
-            <div className="w-8.5 h-8.5" />
+            <BurgerIcon open={mobileMenuOpen} />
             <MobileMenu />
           </div>
 
