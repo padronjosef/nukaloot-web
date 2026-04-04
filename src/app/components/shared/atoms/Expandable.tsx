@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronIcon } from "./ChevronIcon";
 import { Collapse } from "./Collapse";
 
 type ExpandableProps = {
+  id?: string;
   title: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
@@ -15,6 +16,7 @@ type ExpandableProps = {
 };
 
 export const Expandable = ({
+  id,
   title,
   children,
   defaultOpen = false,
@@ -25,24 +27,34 @@ export const Expandable = ({
 }: ExpandableProps) => {
   const [open, setOpen] = useState(defaultOpen);
 
+  useEffect(() => {
+    if (!id) return;
+    const stored = localStorage.getItem(`expandable_${id}`);
+    if (stored !== null) setOpen(stored === "true");
+  }, [id]);
+
+  const toggle = () => {
+    setOpen((v) => {
+      const next = !v;
+      if (id) localStorage.setItem(`expandable_${id}`, String(next));
+      return next;
+    });
+  };
+
   return (
     <div>
-      <div className="w-full flex items-center py-1 cursor-pointer" onClick={() => setOpen((v) => !v)}>
-        {leftSlot ? (
+      <div className="w-full flex items-center py-1 cursor-pointer" onClick={toggle}>
+        {leftSlot && (
           <div
             onClick={(e) => { e.stopPropagation(); onLeftSlotClick?.(); }}
-            className="flex items-center gap-2 cursor-pointer"
+            className="cursor-pointer mr-2"
           >
             {leftSlot}
-            <span className="text-sm font-bold text-white uppercase tracking-wider">
-              {title}
-            </span>
           </div>
-        ) : (
-          <span className="text-sm font-bold text-white uppercase tracking-wider">
-            {title}
-          </span>
         )}
+        <span className="text-sm font-bold text-white uppercase tracking-wider">
+          {title}
+        </span>
         <div className={`flex items-center gap-1 ${compact ? "" : "ml-auto"}`}>
           {rightSlot}
           <ChevronIcon open={open} />

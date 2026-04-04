@@ -138,6 +138,7 @@ export const MobileMenu = () => {
         </div>
 
         <Expandable
+          id="currency"
           title="Currency"
           rightSlot={
             <div className="flex items-center gap-2 text-sm">
@@ -166,6 +167,7 @@ export const MobileMenu = () => {
         </div>
 
         <Expandable
+          id="main-stores"
           title="Main Stores"
           defaultOpen
           leftSlot={<Checkbox checked={mainStores.every((s) => currentSet.has(s))} />}
@@ -175,6 +177,7 @@ export const MobileMenu = () => {
         </Expandable>
 
         <Expandable
+          id="other-stores"
           title="Other Stores"
           leftSlot={<Checkbox checked={otherStores.every((s) => currentSet.has(s))} />}
           onLeftSlotClick={() => toggleGroup(otherStores)}
