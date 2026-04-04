@@ -15,7 +15,7 @@ export const CheapestButton = ({
   className = "",
 }: CheapestButtonProps) => {
   return (
-    <Button variant={active ? "success" : "outline"} onClick={onClick} className={`w-fit shrink-0 ${className}`}>
+    <Button variant={active ? "success" : "ghost"} onClick={onClick} className={`w-fit shrink-0 ${className}`}>
       <FireIcon />
       Cheapest only
     </Button>

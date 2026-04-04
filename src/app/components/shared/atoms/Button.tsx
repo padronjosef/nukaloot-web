@@ -1,7 +1,7 @@
 "use client";
 
 type ButtonProps = {
-  variant?: "default" | "outline" | "success";
+  variant?: "default" | "outline" | "success" | "ghost";
   onClick?: () => void;
   type?: "button" | "submit";
   disabled?: boolean;
@@ -15,6 +15,7 @@ const VARIANTS = {
   default: "bg-zinc-100 text-zinc-900",
   outline: "bg-zinc-800 text-zinc-400 hover:text-zinc-200",
   success: "bg-green-900 text-green-400",
+  ghost: "bg-zinc-800 text-zinc-400 border border-zinc-400",
 } as const;
 
 export const Button = ({
