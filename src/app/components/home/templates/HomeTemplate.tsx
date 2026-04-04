@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { RecentSearches } from "../molecules/RecentSearches";
-import { useSearchStore } from "../../../stores/useSearchStore";
-import { useUIStore } from "../../../stores/useUIStore";
+import { useSearchStore } from "@/app/stores/useSearchStore";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 const FeaturedCarousel = dynamic(() =>
   import("../organisms/FeaturedCarousel").then((m) => ({ default: m.FeaturedCarousel })),

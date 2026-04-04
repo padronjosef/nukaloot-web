@@ -1,18 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { Collapse } from "../../shared/atoms/Collapse";
-import { Expandable } from "../../shared/atoms/Expandable";
-import { Checkbox } from "../../shared/atoms/Checkbox";
-import { StoreIcon } from "../../shared/atoms/StoreIcon";
+import { Collapse } from "@/app/components/shared/atoms/Collapse";
+import { Expandable } from "@/app/components/shared/atoms/Expandable";
+import { Checkbox } from "@/app/components/shared/atoms/Checkbox";
+import { StoreIcon } from "@/app/components/shared/atoms/StoreIcon";
 import { CheapestButton } from "../atoms/CheapestButton";
 import { ViewToggle } from "../atoms/ViewToggle";
-import { GLOBAL_CURRENCIES, LATAM_CURRENCIES, getCountryForCurrency } from "../../../lib/currency";
-import { MAIN_STORES, STORE_ICONS } from "../../../lib/stores";
-import type { CurrencyCode } from "../../../lib/stores/types";
-import { useFilterStore, selectAllStoresSelected, selectAllStoreNames } from "../../../stores/useFilterStore";
-import { useSearchStore } from "../../../stores/useSearchStore";
-import { useUIStore } from "../../../stores/useUIStore";
+import { GLOBAL_CURRENCIES, LATAM_CURRENCIES, getCountryForCurrency } from "@/app/lib/currency";
+import { MAIN_STORES, STORE_ICONS } from "@/app/lib/stores";
+import type { CurrencyCode } from "@/app/lib/stores/types";
+import { useFilterStore, selectAllStoresSelected, selectAllStoreNames } from "@/app/stores/useFilterStore";
+import { useSearchStore } from "@/app/stores/useSearchStore";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 const FlagIcon = ({ country }: { country: string }) => (
   <Image

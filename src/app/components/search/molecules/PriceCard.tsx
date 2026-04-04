@@ -1,8 +1,8 @@
 "use client";
 
-import { GameCard } from "../../shared/molecules/GameCard";
-import { StoreIcon } from "../../shared/atoms/StoreIcon";
-import type { PriceResult } from "../../../lib/stores";
+import { GameCard } from "@/app/components/shared/molecules/GameCard";
+import { StoreIcon } from "@/app/components/shared/atoms/StoreIcon";
+import type { PriceResult } from "@/app/lib/stores";
 
 type PriceCardProps = {
   price: PriceResult;

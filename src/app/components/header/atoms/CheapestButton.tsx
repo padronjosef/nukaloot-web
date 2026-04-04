@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "../../shared/atoms/Button";
-import { FireIcon } from "../../shared/atoms/FireIcon";
+import { Button } from "@/app/components/shared/atoms/Button";
+import { FireIcon } from "@/app/components/shared/atoms/FireIcon";
 
 type CheapestButtonProps = {
   active: boolean;

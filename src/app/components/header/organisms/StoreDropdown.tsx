@@ -1,10 +1,10 @@
 "use client";
 
-import { Checkbox } from "../../shared/atoms/Checkbox";
-import { Dropdown } from "../../shared/atoms/Dropdown";
+import { Checkbox } from "@/app/components/shared/atoms/Checkbox";
+import { Dropdown } from "@/app/components/shared/atoms/Dropdown";
 import { StoreList } from "../molecules/StoreList";
-import { useFilterStore, selectAllStoresSelected, selectAllStoreNames } from "../../../stores/useFilterStore";
-import { useSearchStore } from "../../../stores/useSearchStore";
+import { useFilterStore, selectAllStoresSelected, selectAllStoreNames } from "@/app/stores/useFilterStore";
+import { useSearchStore } from "@/app/stores/useSearchStore";
 
 export const StoreDropdown = () => {
   const selectedStores = useFilterStore((s) => s.selectedStores);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { CloseButton } from "../../shared/atoms/CloseButton";
+import { CloseButton } from "@/app/components/shared/atoms/CloseButton";
 
 type SearchFormProps = {
   query: string;

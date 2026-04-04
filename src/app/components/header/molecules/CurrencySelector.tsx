@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Dropdown, useDropdownClose } from "../../shared/atoms/Dropdown";
-import { GLOBAL_CURRENCIES, LATAM_CURRENCIES, getCountryForCurrency } from "../../../lib/currency";
-import type { CurrencyCode } from "../../../lib/stores/types";
+import { Dropdown, useDropdownClose } from "@/app/components/shared/atoms/Dropdown";
+import { GLOBAL_CURRENCIES, LATAM_CURRENCIES, getCountryForCurrency } from "@/app/lib/currency";
+import type { CurrencyCode } from "@/app/lib/stores/types";
 
 type CurrencySelectorProps = {
   value: CurrencyCode;

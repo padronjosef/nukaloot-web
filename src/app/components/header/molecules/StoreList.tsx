@@ -1,8 +1,8 @@
 "use client";
 
-import { MAIN_STORES } from "../../../lib/stores";
-import { StoreIcon } from "../../shared/atoms/StoreIcon";
-import { Checkbox } from "../../shared/atoms/Checkbox";
+import { MAIN_STORES } from "@/app/lib/stores";
+import { StoreIcon } from "@/app/components/shared/atoms/StoreIcon";
+import { Checkbox } from "@/app/components/shared/atoms/Checkbox";
 
 type StoreListProps = {
   allStoreNames: string[];

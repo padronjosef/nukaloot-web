@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ChevronIcon } from "./ChevronIcon";
-import { useUIStore } from "../../../stores/useUIStore";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 export const ScrollToTop = () => {
   const [scrolled, setScrolled] = useState(false);

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useMemo } from "react";
 import Image from "next/image";
-import { API_URL } from "../../../lib/stores";
+import { API_URL } from "@/app/lib/stores";
 import { FeaturedCarouselSkeleton } from "./FeaturedCarouselSkeleton";
 
 type FeaturedGame = {

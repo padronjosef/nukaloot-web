@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
-import { getCurrencySymbol } from "../../../lib/currency";
-import { convertPrice } from "../../../lib/currency";
+import { getCurrencySymbol } from "@/app/lib/currency";
+import { convertPrice } from "@/app/lib/currency";
 import { PriceGrid } from "../organisms/PriceGrid";
-import { useSearchStore } from "../../../stores/useSearchStore";
-import { useFilterStore } from "../../../stores/useFilterStore";
-import { useDisplayPrices } from "../../../stores/selectors";
+import { useSearchStore } from "@/app/stores/useSearchStore";
+import { useFilterStore } from "@/app/stores/useFilterStore";
+import { useDisplayPrices } from "@/app/stores/selectors";
 import { SearchSkeleton } from "../atoms/SearchSkeleton";
 const ITEMS_PER_PAGE = 21;
 

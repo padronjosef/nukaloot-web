@@ -1,4 +1,4 @@
-import { Skeleton } from "../../shared/atoms/Skeleton";
+import { Skeleton } from "@/app/components/shared/atoms/Skeleton";
 
 export const FeaturedCarouselSkeleton = () => (
   <div className="w-full relative z-10 mb-10 mx-auto" style={{ maxWidth: 1400 }}>

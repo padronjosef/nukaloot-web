@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "../../shared/atoms/Button";
-import { TYPE_LABELS, type TypeFilter } from "../../../lib/stores";
+import { Button } from "@/app/components/shared/atoms/Button";
+import { TYPE_LABELS, type TypeFilter } from "@/app/lib/stores";
 
 type TypeFilterBarProps = {
   value: TypeFilter;

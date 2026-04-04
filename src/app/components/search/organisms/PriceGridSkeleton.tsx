@@ -1,4 +1,4 @@
-import { Skeleton } from "../../shared/atoms/Skeleton";
+import { Skeleton } from "@/app/components/shared/atoms/Skeleton";
 
 export const PriceGridSkeleton = () => (
   <>

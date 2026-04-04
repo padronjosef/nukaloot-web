@@ -1,8 +1,8 @@
 "use client";
 
-import { CloseButton } from "../../shared/atoms/CloseButton";
+import { CloseButton } from "@/app/components/shared/atoms/CloseButton";
 import { RecentSearchesSkeleton } from "./RecentSearchesSkeleton";
-import { useSearchStore } from "../../../stores/useSearchStore";
+import { useSearchStore } from "@/app/stores/useSearchStore";
 
 type RecentSearchesProps = {
   onSelect: (term: string) => void;

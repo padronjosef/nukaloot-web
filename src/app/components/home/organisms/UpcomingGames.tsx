@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { GameCard } from "../../shared/molecules/GameCard";
-import { API_URL } from "../../../lib/stores";
-import { useFilterStore } from "../../../stores/useFilterStore";
+import { GameCard } from "@/app/components/shared/molecules/GameCard";
+import { API_URL } from "@/app/lib/stores";
+import { useFilterStore } from "@/app/stores/useFilterStore";
 import { UpcomingGamesSkeleton } from "./UpcomingGamesSkeleton";
 
 type UpcomingGame = {

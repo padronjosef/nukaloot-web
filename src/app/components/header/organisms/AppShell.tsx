@@ -3,12 +3,12 @@
 import { useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { HOME_BACKGROUNDS } from "../../../lib/stores";
+import { HOME_BACKGROUNDS } from "@/app/lib/stores";
 import { HeaderSkeleton } from "../atoms/HeaderSkeleton";
-import { getHomeBackground } from "../../../lib/storage";
-import { BackgroundImage } from "../../shared/atoms/BackgroundImage";
-import { useCrossfade } from "../../../hooks/useCrossfade";
-import { Toast, ToastContainer } from "../../shared/molecules/Toast";
+import { getHomeBackground } from "@/app/lib/storage";
+import { BackgroundImage } from "@/app/components/shared/atoms/BackgroundImage";
+import { useCrossfade } from "@/app/hooks/useCrossfade";
+import { Toast, ToastContainer } from "@/app/components/shared/molecules/Toast";
 import { TypeFilterBar } from "../molecules/TypeFilterBar";
 import { ResultsToast } from "../molecules/ResultsToast";
 import { SearchForm } from "../molecules/SearchForm";
@@ -16,13 +16,13 @@ import { GameNameFilter } from "../molecules/GameNameFilter";
 import { ViewToggle } from "../atoms/ViewToggle";
 import { BurgerIcon } from "../atoms/BurgerIcon";
 import { CheapestButton } from "../atoms/CheapestButton";
-import { FireIcon } from "../../shared/atoms/FireIcon";
-import { ScrollToTop } from "../../shared/atoms/ScrollToTop";
-import { useFilterStore, selectAllStoresSelected } from "../../../stores/useFilterStore";
-import { useSearchStore } from "../../../stores/useSearchStore";
-import { useUIStore } from "../../../stores/useUIStore";
-import { useDisplayPrices } from "../../../stores/selectors";
-import type { TypeFilter } from "../../../lib/stores";
+import { FireIcon } from "@/app/components/shared/atoms/FireIcon";
+import { ScrollToTop } from "@/app/components/shared/atoms/ScrollToTop";
+import { useFilterStore, selectAllStoresSelected } from "@/app/stores/useFilterStore";
+import { useSearchStore } from "@/app/stores/useSearchStore";
+import { useUIStore } from "@/app/stores/useUIStore";
+import { useDisplayPrices } from "@/app/stores/selectors";
+import type { TypeFilter } from "@/app/lib/stores";
 
 const CurrencySelector = dynamic(() =>
   import("../molecules/CurrencySelector").then((m) => ({ default: m.CurrencySelector })),

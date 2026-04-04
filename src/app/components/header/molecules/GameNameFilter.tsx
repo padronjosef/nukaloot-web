@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Collapse } from "../../shared/atoms/Collapse";
-import { ChevronIcon } from "../../shared/atoms/ChevronIcon";
-import { useResultCount } from "../../../stores/selectors";
+import { Collapse } from "@/app/components/shared/atoms/Collapse";
+import { ChevronIcon } from "@/app/components/shared/atoms/ChevronIcon";
+import { useResultCount } from "@/app/stores/selectors";
 
 type GameNameFilterProps = {
   gameNames: string[];

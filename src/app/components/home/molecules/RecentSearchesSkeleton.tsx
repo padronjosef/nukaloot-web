@@ -1,4 +1,4 @@
-import { Skeleton } from "../../shared/atoms/Skeleton";
+import { Skeleton } from "@/app/components/shared/atoms/Skeleton";
 
 export const RecentSearchesSkeleton = () => (
   <div className="w-full max-w-5xl mx-auto px-4 mb-6 relative z-10">

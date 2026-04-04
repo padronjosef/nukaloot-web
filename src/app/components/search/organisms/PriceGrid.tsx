@@ -2,9 +2,9 @@
 
 import { AnimatePresence } from "motion/react";
 import { PriceCard } from "../molecules/PriceCard";
-import { SkeletonCard } from "../../shared/molecules/GameCard";
-import { useGridColumns } from "../../../hooks/useGridColumns";
-import type { PriceResult, TypeFilter, ViewMode } from "../../../lib/stores";
+import { SkeletonCard } from "@/app/components/shared/molecules/GameCard";
+import { useGridColumns } from "@/app/hooks/useGridColumns";
+import type { PriceResult, TypeFilter, ViewMode } from "@/app/lib/stores";
 
 type PriceGridProps = {
   prices: PriceResult[];

@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CloseButton } from "../../shared/atoms/CloseButton";
-import { useUIStore } from "../../../stores/useUIStore";
+import { CloseButton } from "@/app/components/shared/atoms/CloseButton";
+import { useUIStore } from "@/app/stores/useUIStore";
 
 type ResultsToastProps = {
   resultCount: number;

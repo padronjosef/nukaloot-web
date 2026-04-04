@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { STORE_ICONS } from "../../../lib/stores";
+import { STORE_ICONS } from "@/app/lib/stores";
 
 export const StoreIcon = ({ storeName }: { storeName: string }) => {
   const icon = STORE_ICONS[storeName];
