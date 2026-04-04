@@ -82,9 +82,14 @@ export const useSearchStore = create<SearchState & SearchActions>()(
         }
 
         if (data.type === "fast") {
+          const latestScrapedAt = data.prices?.reduce(
+            (latest: string, p: PriceResult & { scrapedAt?: string }) =>
+              p.scrapedAt && p.scrapedAt > latest ? p.scrapedAt : latest,
+            "",
+          );
           set({
             results: { game: data.game, prices: data.prices },
-            lastUpdated: new Date(),
+            lastUpdated: latestScrapedAt ? new Date(latestScrapedAt) : new Date(),
             loading: false,
           });
           if (data.prices && data.prices.length > 0) {

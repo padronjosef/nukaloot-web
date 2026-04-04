@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Collapse } from "../../shared/atoms/Collapse";
 import { ChevronIcon } from "../../shared/atoms/ChevronIcon";
+import { useResultCount } from "../../../stores/selectors";
 
 type GameNameFilterProps = {
   gameNames: string[];
@@ -38,6 +39,7 @@ export const GameNameFilter = ({
   activeFilter,
   onFilterChange,
 }: GameNameFilterProps) => {
+  const resultCount = useResultCount();
   const [expanded, setExpanded] = useState(false);
   const [hiddenCount, setHiddenCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,7 @@ export const GameNameFilter = ({
     setExpanded(false);
   };
 
-  if (gameNames.length <= 1) return null;
+  if (gameNames.length <= 1 && !resultCount) return null;
 
   const allNames = ["All Games", ...gameNames];
 
@@ -79,7 +81,12 @@ export const GameNameFilter = ({
       <div className="w-full relative">
         <div className="overflow-hidden h-8">
           <div ref={containerRef} className="flex flex-wrap gap-2 pr-42">
-            {allNames.map((name) => (
+            {resultCount !== undefined && (
+              <span className="px-3 h-8 rounded-lg text-xs font-bold flex items-center bg-zinc-100 text-zinc-900">
+                {resultCount} Results
+              </span>
+            )}
+            {gameNames.length > 1 && allNames.map((name) => (
               <NameButton
                 key={name}
                 name={name}
@@ -94,7 +101,12 @@ export const GameNameFilter = ({
           className="md:relative absolute left-0 right-0 top-0 z-101 bg-zinc-900 md:bg-transparent rounded-lg md:rounded-none shadow-2xl md:shadow-none"
         >
           <div className="flex flex-wrap gap-2 md:pt-2 pr-10">
-            {allNames.map((name) => (
+            {resultCount !== undefined && (
+              <span className="px-3 h-8 rounded-lg text-xs font-bold flex items-center bg-zinc-100 text-zinc-900">
+                {resultCount} Results
+              </span>
+            )}
+            {gameNames.length > 1 && allNames.map((name) => (
               <NameButton
                 key={name}
                 name={name}

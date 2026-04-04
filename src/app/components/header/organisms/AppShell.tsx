@@ -20,6 +20,7 @@ import { FireIcon } from "../../shared/atoms/FireIcon";
 import { useFilterStore, selectAllStoresSelected } from "../../../stores/useFilterStore";
 import { useSearchStore } from "../../../stores/useSearchStore";
 import { useUIStore } from "../../../stores/useUIStore";
+import { useDisplayPrices } from "../../../stores/selectors";
 import type { TypeFilter } from "../../../lib/stores";
 
 const CurrencySelector = dynamic(() =>
@@ -111,33 +112,7 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
     [results, gameFilter],
   );
 
-  const filteredPrices = useMemo(
-    () =>
-      results?.prices.filter((p) => {
-        const matchesType = typeFilter === "all" || p.gameType === typeFilter;
-        const storeName = p.store?.name || p.storeName || "";
-        const matchesStore = allStoresSelected || selectedStores.has(storeName);
-        if (gameFilter === "all") return matchesType && matchesStore;
-        return matchesType && matchesStore && p.gameName === gameFilter;
-      }),
-    [results, typeFilter, allStoresSelected, selectedStores, gameFilter],
-  );
-
-  const displayPrices = useMemo(() => {
-    if (!filteredPrices) return undefined;
-    if (!cheapestOnly) return filteredPrices;
-    return [
-      ...filteredPrices
-        .reduce((acc, p) => {
-          const key = `${p.gameName}::${p.gameType}`;
-          if (!acc.has(key) || Number(p.price) < Number(acc.get(key)!.price)) {
-            acc.set(key, p);
-          }
-          return acc;
-        }, new Map<string, (typeof filteredPrices)[number]>())
-        .values(),
-    ];
-  }, [cheapestOnly, filteredPrices]);
+  const displayPrices = useDisplayPrices();
 
   // Handlers
   const handleTypeChange = (type: TypeFilter) => {

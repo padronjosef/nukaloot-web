@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { getCurrencySymbol } from "../../../lib/currency";
 import { convertPrice } from "../../../lib/currency";
 import { PriceGrid } from "../organisms/PriceGrid";
 import { useSearchStore } from "../../../stores/useSearchStore";
-import { useFilterStore, selectAllStoresSelected } from "../../../stores/useFilterStore";
-import type { PriceResult } from "../../../lib/stores";
+import { useFilterStore } from "../../../stores/useFilterStore";
+import { useDisplayPrices } from "../../../stores/selectors";
 import { SearchSkeleton } from "../atoms/SearchSkeleton";
 const ITEMS_PER_PAGE = 21;
 
@@ -30,11 +30,9 @@ export const SearchTemplate = () => {
   const typeFilter = useFilterStore((s) => s.typeFilter);
   const gameFilter = useFilterStore((s) => s.gameFilter);
   const viewMode = useFilterStore((s) => s.viewMode);
-  const cheapestOnly = useFilterStore((s) => s.cheapestOnly);
-  const selectedStores = useFilterStore((s) => s.selectedStores);
-  const allStoresSelected = useFilterStore(selectAllStoresSelected);
 
-  // UI store
+  // Derived
+  const displayPrices = useDisplayPrices();
 
   // Search from URL
   useEffect(() => {
@@ -76,34 +74,6 @@ export const SearchTemplate = () => {
     },
     [rates, currency, symbol],
   );
-
-  const filteredPrices = useMemo(
-    () =>
-      results?.prices.filter((p) => {
-        const matchesType = typeFilter === "all" || p.gameType === typeFilter;
-        const storeName = p.store?.name || p.storeName || "";
-        const matchesStore = allStoresSelected || selectedStores.has(storeName);
-        if (gameFilter === "all") return matchesType && matchesStore;
-        return matchesType && matchesStore && p.gameName === gameFilter;
-      }),
-    [results, typeFilter, allStoresSelected, selectedStores, gameFilter],
-  );
-
-  const displayPrices = useMemo(() => {
-    if (!filteredPrices) return undefined;
-    if (!cheapestOnly) return filteredPrices;
-    return [
-      ...filteredPrices
-        .reduce((acc, p) => {
-          const key = `${p.gameName}::${p.gameType}`;
-          if (!acc.has(key) || Number(p.price) < Number(acc.get(key)!.price)) {
-            acc.set(key, p);
-          }
-          return acc;
-        }, new Map<string, PriceResult>())
-        .values(),
-    ];
-  }, [cheapestOnly, filteredPrices]);
 
   const showSkeleton = loading || (!results && !!q && !lastUpdated);
 
