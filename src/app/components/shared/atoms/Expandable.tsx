@@ -30,7 +30,7 @@ export const Expandable = ({
   useEffect(() => {
     if (!id) return;
     const stored = localStorage.getItem(`expandable_${id}`);
-    if (stored !== null) setOpen(stored === "true");
+    if (stored !== null) queueMicrotask(() => setOpen(stored === "true"));
   }, [id]);
 
   const toggle = () => {
