@@ -1,6 +1,7 @@
 "use client";
 
-import { CloseButton } from "../atoms/CloseButton";
+import { Button } from "@/shared/UI/Button";
+import { X } from "lucide-react";
 
 type ToastVariant = "success" | "warning" | "error" | "info";
 
@@ -81,9 +82,9 @@ const VARIANT_CONFIG: Record<
     ),
   },
   info: {
-    border: "border-blue-700/50",
+    border: "border-primary/50",
     icon: (
-      <div className="w-4 h-4 border-2 border-zinc-600 border-t-blue-500 rounded-full animate-spin shrink-0" />
+      <div className="w-4 h-4 border-2 border-muted-foreground/60 border-t-primary rounded-full animate-spin shrink-0" />
     ),
   },
 };
@@ -92,12 +93,14 @@ export const Toast = ({ variant, message, onClose }: ToastProps) => {
   const config = VARIANT_CONFIG[variant];
   return (
     <div
-      className={`flex items-center gap-3 bg-zinc-800 border ${config.border} rounded-lg px-4 py-3 shadow-2xl`}
+      className={`flex items-center gap-3 bg-muted border ${config.border} rounded-lg px-4 py-3 shadow-2xl`}
     >
       {config.icon}
-      <span className="text-sm text-zinc-300">{message}</span>
+      <span className="text-sm text-foreground/80">{message}</span>
       {onClose && (
-        <CloseButton onClick={onClose} className="ml-1" />
+        <Button variant="ghost" size="icon-xs" onClick={onClose} className="ml-1">
+          <X className="size-3.5" />
+        </Button>
       )}
     </div>
   );

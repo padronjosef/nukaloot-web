@@ -1,4 +1,4 @@
-import type { CrossfadeLayers } from "@/app/hooks/useCrossfade";
+import type { CrossfadeLayers } from "@/shared/hooks/useCrossfade";
 
 type BackgroundImageProps = {
   /** Static image URL (takes priority over crossfade) */

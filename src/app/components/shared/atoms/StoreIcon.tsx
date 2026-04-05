@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { STORE_ICONS } from "@/app/lib/stores";
+import { ALL_STORES } from "@/shared/lib/stores";
 
 export const StoreIcon = ({ storeName }: { storeName: string }) => {
-  const icon = STORE_ICONS[storeName];
+  const icon = ALL_STORES[storeName];
   if (!icon) return null;
 
   return (
@@ -10,8 +10,8 @@ export const StoreIcon = ({ storeName }: { storeName: string }) => {
       src={`/store-icons/${icon.file}.${icon.ext}`}
       alt={storeName}
       title={storeName}
-      width={24}
-      height={24}
+      width={20}
+      height={20}
       className="inline-block rounded-sm"
     />
   );
