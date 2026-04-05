@@ -1,177 +1,188 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Image from "next/image";
-import { API_URL } from "@/app/lib/stores";
-import { FeaturedCarouselSkeleton } from "./FeaturedCarouselSkeleton";
+import { Gamepad2 } from "lucide-react";
 
 type FeaturedGame = {
   name: string;
   appId: number;
   image: string;
+  finalPrice?: number;
+  discountPercent?: number;
 }
 
 type FeaturedCarouselProps = {
+  games: FeaturedGame[];
   onSelect: (name: string) => void;
-  onRateLimited?: () => void;
 }
 
-export const FeaturedCarousel = ({
+const FeaturedCard = ({
+  game,
   onSelect,
-  onRateLimited,
+  priority = false,
+}: {
+  game: FeaturedGame;
+  onSelect: (name: string) => void;
+  priority?: boolean;
+}) => {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div
+      className="flex flex-col shrink-0 w-48 md:w-56 cursor-pointer"
+      onClick={() => onSelect(game.name)}
+    >
+      <div className="relative aspect-[3/4] rounded-t-lg overflow-hidden bg-background/90 border border-b-0 border-border/50 hover:border-border transition-colors group">
+        {!game.image || imgError ? (
+          <div className="absolute inset-0 bg-muted flex items-center justify-center">
+            <Gamepad2 className="size-12 text-muted-foreground/40" />
+          </div>
+        ) : (
+          <Image
+            src={game.image}
+            alt={game.name}
+            fill
+            sizes="(max-width: 768px) 192px, 224px"
+            priority={priority}
+            onError={() => setImgError(true)}
+            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+          />
+        )}
+        {game.discountPercent && game.discountPercent > 0 && (
+          <span className="absolute top-2 left-2 text-xs font-bold px-2 py-1 rounded bg-primary text-primary-foreground">
+            -{game.discountPercent}%
+          </span>
+        )}
+      </div>
+      <div className="flex flex-col gap-1.5 bg-background/90 rounded-b-lg border border-t-0 border-border/50 px-3 py-2">
+        <h3 className="text-sm font-bold text-foreground line-clamp-1">
+          {game.name}
+        </h3>
+        <div className="flex items-center justify-between">
+          {game.finalPrice !== undefined && game.finalPrice > 0 ? (
+            <span className="text-base font-bold text-foreground">
+              ${game.finalPrice.toFixed(2)}
+            </span>
+          ) : (
+            <span className="text-xs text-muted-foreground">Free / N/A</span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const FeaturedCarousel = ({
+  games,
+  onSelect,
 }: FeaturedCarouselProps) => {
-  const [games, setGames] = useState<FeaturedGame[]>([]);
-  const [loading, setLoading] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const hovering = useRef(false);
+  const dragging = useRef(false);
+  const startX = useRef(0);
+  const startScroll = useRef(0);
+  const hasDragged = useRef(false);
+
+  const doubled = useMemo(() => [...games, ...games], [games]);
+
+  const autoScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el || hovering.current || dragging.current) return;
+    el.scrollLeft += 0.6;
+    if (el.scrollLeft >= el.scrollWidth / 2) {
+      el.scrollLeft = 0;
+    }
+  }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/games/featured`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (data?.rateLimited) onRateLimited?.();
-        setGames(
-          Array.isArray(data?.items)
-            ? data.items
-            : Array.isArray(data)
-              ? data
-              : [],
-        );
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, [onRateLimited]);
+    if (games.length === 0) return;
+    let id: number;
+    const step = () => {
+      autoScroll();
+      id = requestAnimationFrame(step);
+    };
+    id = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(id);
+  }, [games, autoScroll]);
 
-  // Auto-scroll + drag
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
 
-    let animationId: number;
-    const autoSpeed = 0.5;
-    let dragging = false;
-    let hovering = false;
-    let startX = 0;
-    let startScroll = 0;
-    let hasDragged = false;
-
-    const step = () => {
-      if (!el) return;
-      if (!dragging && !hovering) {
-        el.scrollLeft += autoSpeed;
-        if (el.scrollLeft >= el.scrollWidth / 2) {
-          el.scrollLeft = 0;
-        }
-      }
-      animationId = requestAnimationFrame(step);
-    };
-
-    animationId = requestAnimationFrame(step);
-
-    const handleEnter = () => {
-      hovering = true;
-    };
-    const handleLeave = () => {
-      hovering = false;
-      if (dragging) {
-        dragging = false;
+    const onEnter = () => { hovering.current = true; };
+    const onLeave = () => {
+      hovering.current = false;
+      if (dragging.current) {
+        dragging.current = false;
         el.style.cursor = "grab";
       }
     };
-
-    const handleDown = (e: MouseEvent) => {
+    const onDown = (e: MouseEvent) => {
       e.preventDefault();
-      dragging = true;
-      hasDragged = false;
-      startX = e.pageX;
-      startScroll = el.scrollLeft;
+      dragging.current = true;
+      hasDragged.current = false;
+      startX.current = e.pageX;
+      startScroll.current = el.scrollLeft;
       el.style.cursor = "grabbing";
     };
-
-    const handleMove = (e: MouseEvent) => {
-      if (!dragging) return;
-      const dx = e.pageX - startX;
-      if (Math.abs(dx) > 3) hasDragged = true;
-      el.scrollLeft = startScroll - dx;
+    const onMove = (e: MouseEvent) => {
+      if (!dragging.current) return;
+      const dx = e.pageX - startX.current;
+      if (Math.abs(dx) > 3) hasDragged.current = true;
+      el.scrollLeft = startScroll.current - dx;
     };
-
-    const handleUp = () => {
-      if (!dragging) return;
-      dragging = false;
+    const onUp = () => {
+      if (!dragging.current) return;
+      dragging.current = false;
       el.style.cursor = "grab";
-      if (hasDragged) {
-        const suppress = (e: Event) => {
-          e.stopPropagation();
-          e.preventDefault();
-        };
+      if (hasDragged.current) {
+        const suppress = (e: Event) => { e.stopPropagation(); e.preventDefault(); };
         el.addEventListener("click", suppress, { capture: true, once: true });
       }
     };
 
     el.style.cursor = "grab";
-    el.addEventListener("mouseenter", handleEnter);
-    el.addEventListener("mouseleave", handleLeave);
-    el.addEventListener("mousedown", handleDown);
-    window.addEventListener("mousemove", handleMove);
-    window.addEventListener("mouseup", handleUp);
+    el.addEventListener("mouseenter", onEnter);
+    el.addEventListener("mouseleave", onLeave);
+    el.addEventListener("mousedown", onDown);
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onUp);
 
     return () => {
-      cancelAnimationFrame(animationId);
-      el.removeEventListener("mouseenter", handleEnter);
-      el.removeEventListener("mouseleave", handleLeave);
-      el.removeEventListener("mousedown", handleDown);
-      window.removeEventListener("mousemove", handleMove);
-      window.removeEventListener("mouseup", handleUp);
+      el.removeEventListener("mouseenter", onEnter);
+      el.removeEventListener("mouseleave", onLeave);
+      el.removeEventListener("mousedown", onDown);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseup", onUp);
     };
-  }, [games, loading]);
+  }, [games]);
 
-  const doubled = useMemo(() => [...games, ...games], [games]);
-
-  if (loading) return <FeaturedCarouselSkeleton />;
+  if (games.length === 0) return null;
 
   return (
-    <div
-      className="w-full relative z-10 mb-10 mx-auto"
-      style={{ maxWidth: 1400 }}
-    >
-      <div className="max-w-5xl mx-auto px-4 mb-3">
-        <h2 className="text-lg font-bold text-white">
-          <span className="bg-black/70 px-2 py-1 rounded">
-            Trending on Steam
-          </span>
-        </h2>
+    <div className="w-full relative z-10 mb-10 mx-auto max-w-5xl px-4">
+      <div className="mb-5">
+        <h2 className="text-2xl font-bold text-foreground">Trending on Steam</h2>
+        <p className="text-sm text-muted-foreground mt-1">The hottest games right now.</p>
       </div>
       <div
         ref={scrollRef}
-        className="flex gap-3 overflow-auto px-4 select-none"
+        className="flex gap-4 overflow-x-auto pb-2 select-none"
         style={{
           scrollbarWidth: "none",
-          maskImage:
-            "linear-gradient(to right, transparent 0%, black 13.5%, black 86.5%, transparent 100%)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent 0%, black 13.5%, black 86.5%, transparent 100%)",
+          maskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%)",
         }}
       >
         {doubled.map((game, i) => (
-            <button
-              key={`${game.appId}-${i}`}
-              onClick={() => onSelect(game.name)}
-              className="group shrink-0 relative w-65 md:w-100 aspect-video rounded-lg overflow-hidden cursor-pointer flex flex-col justify-start"
-            >
-              <Image
-                src={game.image}
-                alt={game.name}
-                fill
-                loading="eager"
-                sizes="(max-width: 768px) 260px, 400px"
-                className="object-cover group-hover:scale-110 transition-all duration-500 ease-out"
-              />
-              <div className="relative p-3">
-                <span className="bg-black/70 text-white text-sm font-bold px-2 py-1 rounded leading-snug line-clamp-2 block w-fit">
-                  {game.name}
-                </span>
-              </div>
-            </button>
-          ))}
+          <FeaturedCard
+            key={`${game.appId}-${i}`}
+            game={game}
+            onSelect={onSelect}
+            priority={i < 5}
+          />
+        ))}
       </div>
     </div>
   );

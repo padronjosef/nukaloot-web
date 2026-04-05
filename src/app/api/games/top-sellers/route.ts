@@ -2,7 +2,7 @@ const INTERNAL_API_URL =
   process.env.INTERNAL_API_URL || "http://localhost:3002";
 
 export const GET = async () => {
-  const res = await fetch(`${INTERNAL_API_URL}/api/games/upcoming`, {
+  const res = await fetch(`${INTERNAL_API_URL}/api/games/top-sellers`, {
     cache: "no-store",
   });
 

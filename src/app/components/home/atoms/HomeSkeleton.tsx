@@ -1,11 +1,11 @@
 import { RecentSearchesSkeleton } from "../molecules/RecentSearchesSkeleton";
 import { FeaturedCarouselSkeleton } from "../organisms/FeaturedCarouselSkeleton";
-import { UpcomingGamesSkeleton } from "../organisms/UpcomingGamesSkeleton";
+import { TopSellersSkeleton } from "../organisms/TopSellersSkeleton";
 
 export const HomeSkeleton = () => (
   <>
     <RecentSearchesSkeleton />
     <FeaturedCarouselSkeleton />
-    <UpcomingGamesSkeleton />
+    <TopSellersSkeleton />
   </>
 );
