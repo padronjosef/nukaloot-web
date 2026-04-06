@@ -41,7 +41,7 @@ export const GameNameFilter = ({
   return (
     <>
       {/* Trigger row */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap">
         {resultCount !== undefined && (
           <Button variant="default" className="pointer-events-none">
             {resultCount} Results
@@ -56,7 +56,7 @@ export const GameNameFilter = ({
             <Button
               variant="default"
               onClick={() => setExpanded(!expanded)}
-              className="max-w-[250px] overflow-hidden"
+              className="max-w-[200px] md:max-w-[250px] overflow-hidden"
             >
               <span className="truncate">{activeFilter === "all" ? "All Games" : activeFilter}</span>
               <ChevronDown
