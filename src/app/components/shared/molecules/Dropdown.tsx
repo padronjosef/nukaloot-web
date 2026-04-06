@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState, createContext, useContext, useCallback } from "react";
+import { useRef, useEffect, useState, useSyncExternalStore, createContext, useContext, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "@/shared/UI/Button";
 import { ChevronDown } from "lucide-react";
@@ -28,12 +28,10 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState<{ top: number; left?: number; right?: number } | null>(null);
-  const [hasMounted, setHasMounted] = useState(false);
+  const hasMounted = useSyncExternalStore(() => () => {}, () => true, () => false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const close = () => setOpen(false);
-
-  useEffect(() => { setHasMounted(true) }, []);
 
   const calcPosition = useCallback(() => {
     if (!triggerRef.current || !panelRef.current) return;
