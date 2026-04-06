@@ -7,6 +7,7 @@ import { Radiation } from "lucide-react";
 import { useFilterStore } from "@/shared/stores/useFilterStore";
 import { useSearchStore } from "@/shared/stores/useSearchStore";
 import { useUIStore } from "@/shared/stores/useUIStore";
+import pkg from "../../../../../package.json";
 
 type HeaderProps = {
   headerRef: React.RefObject<HTMLDivElement | null>;
@@ -64,16 +65,19 @@ export const Header = ({ headerRef, inputRef }: HeaderProps) => {
         {/* Desktop header */}
         <header className="hidden md:flex w-full relative z-10 bg-background">
           <div className="w-full max-w-5xl mx-auto px-5 py-3 flex items-center justify-between">
-            <h1
-              className="text-xl font-bold italic text-primary shrink-0 cursor-pointer flex items-center gap-2"
+            <div
+              className="shrink-0 flex flex-col cursor-pointer"
               onClick={() => {
                 router.push("/");
                 clearSearch();
               }}
             >
-              <Radiation className="size-6 rounded-full" />
-              Nukaloot
-            </h1>
+              <h1 className="text-xl font-bold italic text-primary flex items-center gap-2">
+                <Radiation className="size-6 rounded-full" />
+                Nukaloot
+              </h1>
+              <span className="text-[9px] text-muted-foreground -mt-1 ml-8">v{pkg.version}</span>
+            </div>
 
             <div className="flex items-center gap-2 flex-1 max-w-150 min-w-0">
               <SearchForm
@@ -104,16 +108,19 @@ export const Header = ({ headerRef, inputRef }: HeaderProps) => {
         <div className="md:hidden w-full flex flex-col bg-background">
           {/* Mobile header bar */}
           <div className="flex items-center justify-between px-4 pt-3 pb-4">
-            <h1
-              className="text-lg font-bold italic text-primary cursor-pointer flex items-center gap-1.5"
+            <div
+              className="flex flex-col cursor-pointer"
               onClick={() => {
                 router.push("/");
                 clearSearch();
               }}
             >
-              <Radiation className="size-5.5 rounded-full" />
-              Nukaloot
-            </h1>
+              <h1 className="text-lg font-bold italic text-primary flex items-center gap-1.5">
+                <Radiation className="size-5.5 rounded-full" />
+                Nukaloot
+              </h1>
+              <span className="text-[9px] text-muted-foreground -mt-1 ml-8">v{pkg.version}</span>
+            </div>
 
             <ViewToggle value={viewMode} onChange={setViewMode} />
           </div>
