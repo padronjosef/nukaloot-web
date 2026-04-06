@@ -74,10 +74,10 @@ export const GameNameFilter = ({
         <Collapse
           open={expanded}
           maxHeight="300px"
-          className="w-full mt-2 order-last"
+          className="w-full -mt-2 order-last"
         >
-          <div className="p-2 bg-muted border border-border rounded-lg">
-            <div className="relative mb-2">
+          <div className="p-1 bg-muted border border-border rounded-lg">
+            <div className="relative mb-1">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
               <input
                 type="text"
@@ -97,7 +97,7 @@ export const GameNameFilter = ({
               )}
             </div>
 
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-0.5">
               {!search.trim() && (
                 <Button
                   onClick={() => select("all")}
