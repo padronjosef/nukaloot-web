@@ -36,7 +36,6 @@ export const MobileMenu = () => {
   const noneSelected = useFilterStore((s) => s.noneSelected);
   const allStoresSelected = useFilterStore(selectAllStoresSelected);
   const toggleStore = useFilterStore((s) => s.toggleStore);
-  const toggleAllStores = useFilterStore((s) => s.toggleAllStores);
   const toggleGroup = useFilterStore((s) => s.toggleGroup);
   const allStoreNames = selectAllStoreNames();
 

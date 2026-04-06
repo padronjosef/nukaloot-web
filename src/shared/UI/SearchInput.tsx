@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Input as InputPrimitive } from "@base-ui/react/input";
 import { Search, X } from "lucide-react";
-import { Button } from "./Button";
 import { cn } from "../lib/utils";
 
 type SearchInputProps = Omit<

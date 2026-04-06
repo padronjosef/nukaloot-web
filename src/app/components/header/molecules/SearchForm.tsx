@@ -38,12 +38,10 @@ export const SearchForm = ({
   onClear,
   onSelectRecent,
   loading,
-  inputFocused,
   onFocusChange,
   recentSearches,
   showRecent,
   onShowRecentChange,
-  lastSearched = "",
   inputRef: externalRef,
   variant = "desktop",
   className = "",
@@ -53,9 +51,7 @@ export const SearchForm = ({
   const internalRef = useRef<HTMLInputElement>(null);
   const ref = externalRef || internalRef;
   const isDesktop = variant === "desktop";
-  const placeholderGame = useUIStore((s) => s.placeholderGame);
   const topSellerNames = useUIStore((s) => s.topSellerNames);
-  const hint = placeholderGame ? `e.g. ${placeholderGame}` : "";
 
   const categories = [
     { value: "all", label: "All Categories" },
@@ -106,7 +102,7 @@ export const SearchForm = ({
         onChange={(e) => onQueryChange(e.target.value)}
         onFocus={() => {
           onFocusChange(true);
-          hasSuggestions && onShowRecentChange(true);
+          if (hasSuggestions) onShowRecentChange(true);
         }}
         onBlur={() => {
           onFocusChange(false);

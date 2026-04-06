@@ -18,6 +18,7 @@ export const SearchTemplate = () => {
   const searchParams = useSearchParams();
   const q = searchParams.get("q") || "";
   const prevQueryRef = useRef("");
+  const [lastSearchedQuery, setLastSearchedQuery] = useState("");
 
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
@@ -44,7 +45,10 @@ export const SearchTemplate = () => {
     if (q && q !== prevQueryRef.current) {
       prevQueryRef.current = q;
       setQuery(q);
-      queueMicrotask(() => setVisibleCount(ITEMS_PER_PAGE));
+      queueMicrotask(() => {
+        setLastSearchedQuery(q);
+        setVisibleCount(ITEMS_PER_PAGE);
+      });
       doSearch(q);
     }
   }, [q, doSearch, setQuery]);
@@ -80,7 +84,7 @@ export const SearchTemplate = () => {
     [rates, currency, symbol],
   );
 
-  const queryPending = !!q && q !== prevQueryRef.current;
+  const queryPending = !!q && q !== lastSearchedQuery;
   const doneLoading = !loading && !queryPending && !!results;
   const hasData = doneLoading && !!displayPrices && displayPrices.length > 0;
   const showSkeleton = loading || queryPending || (!doneLoading && !!q && !lastUpdated);
