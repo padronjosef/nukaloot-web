@@ -88,58 +88,75 @@ export const GameCard = ({
               fill
               sizes="64px"
               loading={priority ? "eager" : "lazy"}
-  
+
               onError={() => setImgError(true)}
               className="object-cover"
             />
           )}
-        </div>
-
-        <div className="flex justify-between w-full h-16">
-          <div className="min-w-0 h-full flex flex-col justify-between">
-            <div className="flex items-center gap-2">
-              {badges?.map((b) => (
+          {/* Mobile badges on image */}
+          {badges && badges.length > 0 && (
+            <div className="md:hidden absolute top-0 left-0 flex gap-1 p-0.5">
+              {badges.map((b) => (
                 <span
                   key={b.label}
-                  className={`text-xs px-1.5 py-0.5 rounded text-foreground font-medium shrink-0 ${b.className}`}
+                  className={`text-[10px] px-1 py-0.5 rounded text-foreground font-medium ${b.className}`}
                 >
                   {b.label}
                 </span>
               ))}
-
-              <span className="text-sm font-bold text-foreground line-clamp-1">
-                {name}
-              </span>
             </div>
+          )}
+        </div>
 
+        <div className="flex flex-col justify-between w-full h-16 min-w-0">
+          <div className="flex items-center gap-2">
+            {badges?.map((b) => (
+              <span
+                key={b.label}
+                className={`hidden md:inline text-xs px-1.5 py-0.5 rounded text-foreground font-medium shrink-0 ${b.className}`}
+              >
+                {b.label}
+              </span>
+            ))}
+
+            <span className="text-sm font-bold text-foreground line-clamp-1">
+              {name}
+            </span>
+
+            {/* Desktop price: inline right */}
+            {(price || bottomRight) && (
+              <div className="hidden md:block shrink-0 ml-auto text-right">
+                {price ? (
+                  <span className="text-xl font-bold">{price}</span>
+                ) : (
+                  bottomRight
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               {storeIcon}
 
               {storeName && (
-                <span className="text-xs text-muted-foreground uppercase tracking-wider">
+                <span className="hidden md:inline text-xs text-muted-foreground uppercase tracking-wider">
                   {storeName}
                 </span>
               )}
             </div>
+
+            {/* Mobile price: bottom right */}
+            {(price || bottomRight) && (
+              <div className="md:hidden shrink-0 text-right">
+                {price ? (
+                  <span className="text-lg font-bold">{price}</span>
+                ) : (
+                  bottomRight
+                )}
+              </div>
+            )}
           </div>
-
-          {(price || bottomRight) && (
-            <div className="shrink-0 text-right">
-              {price ? (
-                <div className="flex flex-col items-end gap-1">
-                  <span className="text-xl font-bold">{price}</span>
-
-                  {originalPrice && (
-                    <span className="text-xs text-muted-foreground">
-                      {originalPrice}
-                    </span>
-                  )}
-                </div>
-              ) : (
-                bottomRight
-              )}
-            </div>
-          )}
         </div>
       </motion.a>
     );
