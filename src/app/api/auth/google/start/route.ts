@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { publicOrigin, publicUrl } from "@/shared/lib/public-origin";
 import {
   GOOGLE_AUTH_URL,
   GOOGLE_STATE_COOKIE,
@@ -8,7 +9,7 @@ import {
 
 export const GET = async (request: NextRequest) => {
   if (!googleEnabled()) {
-    return NextResponse.redirect(new URL("/?signin=1&error=google", request.url));
+    return NextResponse.redirect(publicUrl(request, "/?signin=1&error=google"));
   }
 
   const next = request.nextUrl.searchParams.get("next") ?? "/";
@@ -22,7 +23,7 @@ export const GET = async (request: NextRequest) => {
   url.searchParams.set("client_id", process.env.GOOGLE_CLIENT_ID!);
   url.searchParams.set(
     "redirect_uri",
-    googleRedirectUri(request.nextUrl.origin),
+    googleRedirectUri(publicOrigin(request)),
   );
   url.searchParams.set("response_type", "code");
   url.searchParams.set("scope", "openid email profile");

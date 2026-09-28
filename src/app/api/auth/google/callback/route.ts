@@ -7,6 +7,7 @@ import {
   googleEnabled,
   googleRedirectUri,
 } from "@/shared/lib/google";
+import { publicOrigin, publicUrl } from "@/shared/lib/public-origin";
 import {
   SESSION_COOKIE,
   SESSION_MAX_AGE,
@@ -15,7 +16,7 @@ import {
 
 const failed = (request: NextRequest, reason: string) =>
   NextResponse.redirect(
-    new URL(`/?signin=1&error=${encodeURIComponent(reason)}`, request.url),
+    publicUrl(request, `/?signin=1&error=${encodeURIComponent(reason)}`),
   );
 
 export const GET = async (request: NextRequest) => {
@@ -42,7 +43,7 @@ export const GET = async (request: NextRequest) => {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID!,
         client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-        redirect_uri: googleRedirectUri(request.nextUrl.origin),
+        redirect_uri: googleRedirectUri(publicOrigin(request)),
         grant_type: "authorization_code",
       }),
     });
@@ -83,7 +84,7 @@ export const GET = async (request: NextRequest) => {
     });
 
     const next = state.slice(state.indexOf(":") + 1) || "/";
-    const response = NextResponse.redirect(new URL(next, request.url));
+    const response = NextResponse.redirect(publicUrl(request, next));
 
     response.cookies.set(SESSION_COOKIE, await signSession(session.user.id), {
       httpOnly: true,
