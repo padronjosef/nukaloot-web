@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { ALL_STORES, MAIN_STORES } from "../lib/stores";
 import type { TypeFilter, ViewMode } from "../lib/stores";
 import type { CurrencyCode } from "../lib/stores/types";
+import type { Platform } from "@/shared/lib/stores/types";
 
 type FilterState = {
   currency: CurrencyCode;
@@ -13,6 +14,8 @@ type FilterState = {
   viewMode: ViewMode;
   cheapestOnly: boolean;
   selectedStores: Set<string>;
+  /** Which machines to show. Empty means every one. */
+  selectedPlatforms: Set<Platform>;
   noneSelected: boolean;
 }
 
@@ -24,6 +27,7 @@ type FilterActions = {
   setViewMode: (mode: ViewMode) => void;
   setCheapestOnly: (value: boolean) => void;
   toggleStore: (store: string) => void;
+  togglePlatform: (platform: Platform) => void;
   toggleAllStores: () => void;
   toggleGroup: (groupStores: string[]) => void;
   hydrate: () => void;
@@ -58,6 +62,9 @@ export const useFilterStore = create<FilterState & FilterActions>()(
     viewMode: "grid",
     cheapestOnly: false,
     selectedStores: new Set<string>(),
+    // Defaults to PC: that is what the catalogue has always shown, and a
+    // console key surfacing unasked is how somebody buys the wrong thing.
+    selectedPlatforms: new Set<Platform>(['pc']),
     noneSelected: false,
 
     // Actions
@@ -74,6 +81,19 @@ export const useFilterStore = create<FilterState & FilterActions>()(
     },
 
     setGameFilter: (gameFilter) => set({ gameFilter }),
+
+    togglePlatform: (platform) =>
+      set((state) => {
+        const next = new Set(state.selectedPlatforms);
+        if (next.has(platform)) {
+          next.delete(platform);
+        } else {
+          next.add(platform);
+        }
+        // Never leave it empty: no platform selected would show nothing and
+        // read as a broken page rather than a filter.
+        return next.size === 0 ? state : { selectedPlatforms: next };
+      }),
 
     setViewMode: (viewMode) => {
       set({ viewMode });

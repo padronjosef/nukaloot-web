@@ -87,6 +87,7 @@ export const GameCard = ({
               alt={name}
               fill
               sizes="64px"
+              priority={priority}
               loading={priority ? "eager" : "lazy"}
 
               onError={() => setImgError(true)}
@@ -179,6 +180,7 @@ export const GameCard = ({
             alt={name}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+            priority={priority}
             loading={priority ? "eager" : "lazy"}
 
             onError={() => setImgError(true)}

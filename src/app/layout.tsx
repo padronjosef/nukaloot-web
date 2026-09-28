@@ -23,11 +23,20 @@ const RootLayout = ({
   children: React.ReactNode;
 }>) => {
   return (
+    // Extensions edit <html> and <body> before React hydrates — Dark Reader
+    // adds data-darkreader-proxy-injected, password managers add their own —
+    // and React then reports a mismatch nobody can fix from here. This
+    // silences that one comparison, on these two elements only and one level
+    // deep: a real mismatch anywhere inside the app is still reported.
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${spaceGrotesk.variable} ${inter.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-background text-foreground"
+      >
         {children}
       </body>
     </html>

@@ -4,18 +4,29 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SearchForm } from "../molecules/SearchForm";
 import { ViewToggle } from "../atoms/ViewToggle";
+import { UserMenu } from "../molecules/UserMenu";
 import { Radiation } from "lucide-react";
 import { useFilterStore } from "@/shared/stores/useFilterStore";
 import { useSearchStore } from "@/shared/stores/useSearchStore";
 import { useUIStore } from "@/shared/stores/useUIStore";
+import type { SessionUser } from "@/shared/lib/session-types";
 import pkg from "../../../../../package.json";
 
 type HeaderProps = {
   headerRef: React.RefObject<HTMLDivElement | null>;
   inputRef: React.RefObject<HTMLInputElement | null>;
+  user: SessionUser | null;
+  canSeeAdmin: boolean;
+
 };
 
-export const Header = ({ headerRef, inputRef }: HeaderProps) => {
+export const Header = ({
+  headerRef,
+  inputRef,
+  user,
+  canSeeAdmin,
+
+}: HeaderProps) => {
   const router = useRouter();
 
   const selectedTypes = useFilterStore((s) => s.selectedTypes);
@@ -109,6 +120,7 @@ export const Header = ({ headerRef, inputRef }: HeaderProps) => {
                 onTypesChange={setSelectedTypes}
               />
               <ViewToggle value={viewMode} onChange={setViewMode} />
+              <UserMenu user={user} canSeeAdmin={canSeeAdmin} />
             </div>
           </div>
         </header>
@@ -131,7 +143,10 @@ export const Header = ({ headerRef, inputRef }: HeaderProps) => {
               <span className="text-[9px] text-muted-foreground -mt-1 ml-8">v{pkg.version}{apiVersion ? ` / api v${apiVersion}` : ""}</span>
             </div>
 
-            <ViewToggle value={viewMode} onChange={setViewMode} />
+            <div className="flex items-center gap-2">
+              <ViewToggle value={viewMode} onChange={setViewMode} />
+              <UserMenu user={user} canSeeAdmin={canSeeAdmin} />
+            </div>
           </div>
 
           {/* Mobile search */}

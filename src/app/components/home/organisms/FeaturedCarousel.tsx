@@ -45,6 +45,11 @@ const FeaturedCard = ({
             fill
             sizes="(max-width: 768px) 192px, 224px"
             priority={priority}
+            // `priority` alone only stops the image being lazy; it leaves
+            // `loading` unset, and the first card here is the largest thing on
+            // the page, so Next flags it as an LCP image loaded without
+            // `eager`. Saying it outright is what the warning asks for.
+            loading={priority ? "eager" : "lazy"}
             onError={() => setImgError(true)}
             className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
           />
@@ -180,7 +185,11 @@ export const FeaturedCarousel = ({
             key={`${game.appId}-${i}`}
             game={game}
             onSelect={onSelect}
-            priority={i < 5}
+            // Counted within one copy, so a game loads the same way in both.
+            // The list is doubled for the marquee, and when the same src was
+            // eager in one copy and lazy in the other, the LCP check found the
+            // lazy one and reported the image as loaded without `eager`.
+            priority={games.length > 0 && i % games.length < 5}
           />
         ))}
       </div>

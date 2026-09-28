@@ -35,6 +35,19 @@ type SelectProps = {
 const isGroup = (item: SelectOption | SelectOptionGroup): item is SelectOptionGroup =>
   "options" in item
 
+/**
+ * Without this the trigger prints the raw value, so an option labelled
+ * "Operator" reads "operator" once it is picked.
+ */
+const labelsByValue = (
+  options: (SelectOption | SelectOptionGroup)[]
+): Record<string, React.ReactNode> =>
+  Object.fromEntries(
+    options
+      .flatMap((item) => (isGroup(item) ? item.options : [item]))
+      .map((option) => [option.value, option.label])
+  )
+
 export const Select = ({
   value,
   onValueChange,
@@ -45,7 +58,13 @@ export const Select = ({
   className,
   disabled,
 }: SelectProps) => (
-  <SelectRoot value={value} onValueChange={onValueChange} defaultValue={defaultValue} disabled={disabled}>
+  <SelectRoot
+    value={value}
+    onValueChange={onValueChange}
+    defaultValue={defaultValue}
+    disabled={disabled}
+    items={labelsByValue(options)}
+  >
     <SelectTrigger size={size} className={className}>
       <SelectValue placeholder={placeholder} />
     </SelectTrigger>

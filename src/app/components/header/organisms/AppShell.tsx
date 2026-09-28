@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { HOME_BACKGROUNDS } from "@/shared/lib/stores";
 import { getHomeBackground } from "@/shared/lib/storage";
 import { BackgroundImage } from "@/app/components/shared/atoms/BackgroundImage";
@@ -10,12 +10,27 @@ import { ResultsToast } from "../molecules/ResultsToast";
 import { ScrollToTop } from "@/app/components/shared/molecules/ScrollToTop";
 import { Footer } from "@/app/components/shared/organisms/Footer";
 import { Header } from "./Header";
+import { LoginModal } from "../molecules/LoginModal";
 import { useFilterStore } from "@/shared/stores/useFilterStore";
 import { useSearchStore } from "@/shared/stores/useSearchStore";
 import { useUIStore } from "@/shared/stores/useUIStore";
+import { useFavouritesStore } from "@/shared/stores/useFavouritesStore";
 import { useDisplayPrices } from "@/shared/stores/selectors";
+import type { SessionUser } from "@/shared/lib/session-types";
 
-export const AppShell = ({ children }: { children: React.ReactNode }) => {
+type AppShellProps = {
+  children: React.ReactNode;
+  user: SessionUser | null;
+  canSeeAdmin: boolean;
+  googleEnabled: boolean;
+};
+
+export const AppShell = ({
+  children,
+  user,
+  canSeeAdmin,
+  googleEnabled,
+}: AppShellProps) => {
   const headerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const homeBgRef = useRef<string>(HOME_BACKGROUNDS[0]);
@@ -38,6 +53,18 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
   const currency = useFilterStore((s) => s.currency);
   const viewMode = useFilterStore((s) => s.viewMode);
   const hydrate = useFilterStore((s) => s.hydrate);
+
+  const setFavouritesSignedIn = useFavouritesStore((s) => s.setSignedIn);
+  const loadFavourites = useFavouritesStore((s) => s.load);
+  const favouritesError = useFavouritesStore((s) => s.error);
+  const clearFavouritesError = useFavouritesStore((s) => s.clearError);
+
+  // The list is fetched once per sign-in, not per search: the star has to
+  // already know its state when results land, or it flickers hollow first.
+  useEffect(() => {
+    setFavouritesSignedIn(!!user);
+    if (user) void loadFavourites();
+  }, [user, setFavouritesSignedIn, loadFavourites]);
 
   const { layers: bgLayers, setImage: setBgImage } = useCrossfade();
   const displayPrices = useDisplayPrices();
@@ -95,7 +122,12 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
         <BackgroundImage crossfade={bgLayers} opacity={0.5} />
       </div>
 
-      <Header headerRef={headerRef} inputRef={inputRef} />
+      <Header headerRef={headerRef} inputRef={inputRef} user={user} canSeeAdmin={canSeeAdmin} />
+
+      {/* Once for the whole page: the header itself renders twice. */}
+      <Suspense fallback={null}>
+        <LoginModal googleEnabled={googleEnabled} signedIn={Boolean(user)} />
+      </Suspense>
 
       {children}
 
@@ -107,6 +139,13 @@ export const AppShell = ({ children }: { children: React.ReactNode }) => {
       <ToastContainer position="bottom-right">
         {error && (
           <Toast variant="error" message={error} onClose={() => setError("")} />
+        )}
+        {favouritesError && (
+          <Toast
+            variant="error"
+            message={favouritesError}
+            onClose={clearFavouritesError}
+          />
         )}
         {rateLimited && (
           <Toast

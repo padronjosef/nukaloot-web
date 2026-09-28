@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { clientMetaHeaders } from "@/shared/lib/client-meta";
 
 const INTERNAL_API_URL =
   process.env.INTERNAL_API_URL || "http://localhost:3002";
@@ -10,7 +11,10 @@ export const GET = async (request: NextRequest) => {
   const upstream = await fetch(
     `${INTERNAL_API_URL}/api/search/stream?q=${encodeURIComponent(q)}&cc=${encodeURIComponent(cc)}`,
     {
-      headers: { Accept: "text/event-stream" },
+      headers: {
+        Accept: "text/event-stream",
+        ...(await clientMetaHeaders(request)),
+      },
     },
   );
 

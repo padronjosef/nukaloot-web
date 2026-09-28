@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { Button } from "@/shared/UI/Button";
 import { ChevronDown } from "lucide-react";
 import { DROPDOWN_DURATION } from "../atoms/animations";
+import { anchorIsOffscreen, dropdownPosition } from "./dropdownPosition";
 
 const DropdownContext = createContext<(() => void) | null>(null);
 export const useDropdownClose = () => useContext(DropdownContext);
@@ -39,35 +40,22 @@ export const Dropdown = ({
     const panel = panelRef.current;
     const vw = document.documentElement.clientWidth;
 
-    // Temporarily make panel visible to measure its natural width
-    panel.style.transform = "scaleY(1)";
-    panel.style.opacity = "0";
-    panel.style.left = "0";
-    panel.style.right = "auto";
+    // Measured without touching inline styles. Writing to panel.style here
+    // and clearing it afterwards used to wipe the left/right React had put
+    // there: on the next render React diffs against its own last value, sees
+    // that side unchanged and does not write it again, so the panel was left
+    // pinned at the window edge. The panel is hidden by transform and opacity,
+    // neither of which affects layout, so its width is already its real one.
     const panelWidth = panel.offsetWidth;
-    panel.style.transform = "";
-    panel.style.opacity = "";
-    panel.style.left = "";
-    panel.style.right = "";
 
-    const top = rect.bottom + 4;
-    const padding = 16;
-
-    // Option 1: align left edge of panel with left edge of trigger
-    if (rect.left + panelWidth + padding <= vw) {
-      setPos({ top, left: rect.left });
+    // Scrolled past the trigger: following it off the edge would leave the
+    // panel hanging over the results on its own.
+    if (anchorIsOffscreen(rect, document.documentElement.clientHeight)) {
+      setOpen(false);
       return;
     }
 
-    // Option 2: align right edge of panel with right edge of trigger
-    const rightSpace = vw - rect.right;
-    if (rightSpace + rect.width + (panelWidth - rect.width) <= vw - padding) {
-      setPos({ top, right: rightSpace });
-      return;
-    }
-
-    // Fallback: pin to right with padding
-    setPos({ top, right: padding });
+    setPos(dropdownPosition(rect, panelWidth, vw));
   }, []);
 
   const handleToggle = () => {
@@ -87,6 +75,39 @@ export const Dropdown = ({
       return () => clearTimeout(timer);
     }
   }, [open, calcPosition]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /**
+   * The panel is positioned `fixed`, so coordinates taken when it opened stop
+   * being true the moment anything moves — the panel stays put while the
+   * trigger slides away and the options drift across the page.
+   *
+   * Watched per frame rather than on `scroll`, because the header is sticky
+   * and keeps animating after the last scroll event fires: listening to scroll
+   * alone left the panel 50px adrift once the header finished collapsing. The
+   * work is a `getBoundingClientRect` per frame, and only a change re-renders.
+   * It runs only while the menu is open.
+   */
+  useEffect(() => {
+    if (!open) return;
+
+    let frame = 0;
+    let last = "";
+
+    const watch = () => {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (rect) {
+        const now = `${rect.top}:${rect.left}:${rect.right}`;
+        if (now !== last) {
+          last = now;
+          calcPosition();
+        }
+      }
+      frame = requestAnimationFrame(watch);
+    };
+
+    frame = requestAnimationFrame(watch);
+    return () => cancelAnimationFrame(frame);
+  }, [open, calcPosition]);
 
   useEffect(() => {
     if (!open) return;

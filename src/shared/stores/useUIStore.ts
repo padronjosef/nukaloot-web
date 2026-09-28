@@ -11,6 +11,11 @@ type UIState = {
   toastVisible: boolean;
   placeholderGame: string;
   topSellerNames: string[];
+  /**
+   * Lives here because the header renders twice — desktop and mobile — and
+   * there must only ever be one sign-in dialog in the page.
+   */
+  signInOpen: boolean;
 }
 
 let filterFadeTimer: ReturnType<typeof setTimeout> | undefined;
@@ -21,6 +26,7 @@ type UIActions = {
   setHeaderHeight: (height: number) => void;
   setRateLimited: (limited: boolean) => void;
   triggerFilterFade: () => void;
+  setSignInOpen: (open: boolean) => void;
 }
 
 export const useUIStore = create<UIState & UIActions>()((set) => ({
@@ -33,6 +39,7 @@ export const useUIStore = create<UIState & UIActions>()((set) => ({
   toastVisible: false,
   placeholderGame: "",
   topSellerNames: [],
+  signInOpen: false,
 
   // Actions
   setMobileMenuOpen: (value) => {
@@ -49,6 +56,8 @@ export const useUIStore = create<UIState & UIActions>()((set) => ({
   setHeaderHeight: (headerHeight) => set({ headerHeight }),
 
   setRateLimited: (rateLimited) => set({ rateLimited }),
+
+  setSignInOpen: (signInOpen) => set({ signInOpen }),
 
   triggerFilterFade: () => {
     set({ filterFade: true });

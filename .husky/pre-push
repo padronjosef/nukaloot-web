@@ -1,2 +1,15 @@
 npm run lint
+npm test
 npm run build
+
+# The console guard needs the app running. It fails loudly rather than
+# skipping, because a guard that quietly does not run is no guard — that is
+# exactly how a console error shipped once already.
+#
+# Set SKIP_CONSOLE_TESTS=1 to push without the stack up. That is a deliberate
+# choice you are making, not a default.
+if [ -z "$SKIP_CONSOLE_TESTS" ]; then
+  npm run test:console
+else
+  echo "pre-push: console guard skipped (SKIP_CONSOLE_TESTS is set)"
+fi

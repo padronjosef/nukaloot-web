@@ -28,12 +28,19 @@ type DropdownCheckboxItemBase = {
 }
 
 type DropdownItemGroupBase = {
-  label?: string
+  /** A node, not just text, so a group can head itself with something richer. */
+  label?: React.ReactNode
   items: (DropdownItemBase | DropdownCheckboxItemBase)[]
 }
 
 type DropdownMenuProps = {
+  /**
+   * The contents of the trigger, never a <button> — the trigger already is
+   * one, and nesting a second breaks hydration. Style it with triggerClassName.
+   */
   trigger: React.ReactNode
+  triggerClassName?: string
+  triggerLabel?: string
   items: (DropdownItemBase | DropdownCheckboxItemBase | DropdownItemGroupBase)[]
   align?: "start" | "center" | "end"
   side?: "top" | "bottom" | "left" | "right"
@@ -77,18 +84,22 @@ const renderItem = (item: DropdownItemBase | DropdownCheckboxItemBase) => {
 
 export const DropdownMenu = ({
   trigger,
+  triggerClassName,
+  triggerLabel,
   items,
   align = "start",
   side = "bottom",
   className,
 }: DropdownMenuProps) => (
   <DropdownMenuRoot>
-    <DropdownMenuTrigger>{trigger}</DropdownMenuTrigger>
+    <DropdownMenuTrigger className={triggerClassName} aria-label={triggerLabel}>
+      {trigger}
+    </DropdownMenuTrigger>
     <DropdownMenuContent align={align} side={side} className={className}>
       {items.map((item, i) => {
         if (isGroup(item)) {
           return (
-            <React.Fragment key={item.label ?? i}>
+            <React.Fragment key={i}>
               <DropdownMenuGroup>
                 {item.label && <DropdownMenuLabel>{item.label}</DropdownMenuLabel>}
                 {item.items.map(renderItem)}

@@ -1,6 +1,7 @@
 "use client";
 
 import { GameCard } from "@/app/components/shared/molecules/GameCard";
+import { PLATFORM_LABELS, toPlatform } from "@/shared/lib/stores/types";
 import { StoreIcon } from "@/app/components/shared/atoms/StoreIcon";
 import type { PriceResult } from "@/shared/lib/stores";
 
@@ -21,6 +22,13 @@ type PriceCardProps = {
   variant?: "grid" | "list";
 }
 
+/** Each console keeps one colour, so the badge is recognisable at a glance. */
+const PLATFORM_BADGE: Record<string, string> = {
+  playstation: "bg-[#1f4fd8]",
+  xbox: "bg-[#15803d]",
+  nintendo: "bg-[#b91c1c]",
+};
+
 export const PriceCard = ({
   price,
   index,
@@ -28,6 +36,15 @@ export const PriceCard = ({
   variant = "grid",
 }: PriceCardProps) => {
   const badges = [];
+  const platform = toPlatform(price.platform);
+  // Shown only for consoles: a "PC" badge on every card in a PC catalogue is
+  // noise, but an unlabelled console key is how somebody buys the wrong one.
+  if (platform !== "pc") {
+    badges.push({
+      label: PLATFORM_LABELS[platform],
+      className: PLATFORM_BADGE[platform],
+    });
+  }
   if (price.gameType === "dlc")
     badges.push({ label: "DLC", className: "bg-orange-500" });
   if (price.gameType === "bundle")

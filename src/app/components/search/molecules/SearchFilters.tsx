@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import dynamic from "next/dynamic";
 import { CheapestButton } from "@/app/components/header/atoms/CheapestButton";
 import { GameNameFilter } from "@/app/components/header/molecules/GameNameFilter";
+import { PlatformFilter } from "./PlatformFilter";
+import { TrackGameButton } from "./TrackGameButton";
 import { useFilterStore } from "@/shared/stores/useFilterStore";
 import { useSearchStore } from "@/shared/stores/useSearchStore";
 
@@ -49,11 +51,13 @@ export const SearchFilters = () => {
             active={cheapestOnly}
             onClick={() => setCheapestOnly(!cheapestOnly)}
           />
+          <TrackGameButton />
           <CurrencySelector
             value={currency}
             onChange={setCurrency}
             availableRates={rates}
           />
+          <PlatformFilter />
         </div>
         <GameNameFilter
           gameNames={gameNames}
